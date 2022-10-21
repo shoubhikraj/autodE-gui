@@ -1,0 +1,1 @@
+from adegui.config import Config # initialize configuration
