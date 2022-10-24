@@ -1,5 +1,6 @@
-# This file contains common functions, constants etc. which is used
-# repeatedly in the main code
+# This file contains common functions, constants etc. which area used
+# in the main code
+import importlib.resources
 from typing import Type, Optional
 from rdkit import Chem
 from rdkit.Chem import AllChem
@@ -24,3 +25,14 @@ def smiles_to_3d_rdkmol(smi: str) -> Optional[Type[Chem.rdchem.Mol]]:
             return None
     except:
         return None
+
+def _read_priv_rsrc_txt(fname: str) -> str:
+    """
+    Take a resource file name in adegui
+    :param fname: Name of text file
+    :return: String containing the contents of text file
+    """
+    with importlib.resources.path('adegui.resources',str(fname)) as fh:
+        text = fh.read_text()
+    return text
+

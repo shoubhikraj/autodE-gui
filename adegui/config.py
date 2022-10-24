@@ -1,21 +1,22 @@
 # Contains the config class which is instantiated once at the beginning
-# of the
+# of the program
 
 class _AdeGuiConfig:
-    ade_n_cores = 8  # Number of cores in autodE
-    ade_job_typ = 'Reaction Profile'
+    def __init__(self):
+        self.adegui_workdir: str = ''  # empty means current working dir for python
 
-    # TODO: remove later <= this is not needed as we are in GUI
-    def __setattr__(self, key, value):
-        """ Check if the values are allowed """
-        if not hasattr(self, key):
-            raise Exception(f'Cannot set {key}, it is not present in autodE-GUI')
+        self.ade_n_cores: int = 8  # Number of cores in autodE
+        self.ade_job_name: str = ''
 
-        allowed_job_typs = ['Reaction Profile','Reaction Path: NEB','Reaction Path: CI-NEB',
-                            'Reaction Path: Dimer', '1D PES', '2D PES']
-        if key == 'ade_job_typ':
-            if value not in allowed_job_typs:
-                raise Exception(f'{key} is not an allowed job type')
+        self.ade_rct_smis: list = ['', '']  # Reactant(s)
+        self.ade_prod_smis: list = ['', '']  # Product(s)
+
+        self.ade_job_typ: str = None  # Job Type
+
+
+        self.ade_avail_lmethods: list[str] = ['XTB', 'MOPAC']
+        self.ade_avail_hmethods: list[str] = ['ORCA', 'Gaussian09', 'Gaussian16', 'NWChem', 'QChem']
+
 
 
 Config = _AdeGuiConfig()

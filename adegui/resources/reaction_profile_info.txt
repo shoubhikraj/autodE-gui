@@ -1,0 +1,1 @@
+Reaction profile calculation in autodE generates a guess for the transition state, and then plots the graph of the reaction pathway. It needs both low accuracy method and high accuracy method
