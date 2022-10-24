@@ -4,7 +4,7 @@ from typing import List, Tuple
 from PyQt5.QtWidgets import (QTabWidget, QWidget, QGroupBox,
                              QVBoxLayout, QLineEdit, QStackedWidget,
                              QPushButton, QComboBox, QHBoxLayout,
-                             QPlainTextEdit,QLabel)
+                             QPlainTextEdit, QLabel)
 from PyQt5.QtCore import pyqtSlot
 import rdkit.Chem
 from adegui.common import smiles_to_3d_rdkmol, _read_priv_rsrc_txt
@@ -105,7 +105,7 @@ class MoleculeDrawOrType(QWidget):
                 mol = smiles_to_3d_rdkmol('C')
             rdkit.Chem.MolToMolFile(mol, cwd+self.mol_fname)
         # else carry on to display
-        subprocess.run(['avogadro', cwd+self.mol_fname])
+        subprocess.run([Config.adegui_moleditor, cwd+self.mol_fname])
         mol = rdkit.Chem.MolFromMolFile(cwd+self.mol_fname)
         smi = rdkit.Chem.MolToSmiles(mol)
         self.smi_textbox.setText(smi)

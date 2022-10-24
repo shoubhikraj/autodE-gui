@@ -5,6 +5,8 @@ class _AdeGuiConfig:
     def __init__(self):
         self.adegui_workdir: str = ''  # empty means current working dir for python
 
+        self.adegui_moleditor: str = '/Applications/Avogadro.app/Contents/MacOS/Avogadro'  # path of the molecule editor
+
         self.ade_n_cores: int = 8  # Number of cores in autodE
         self.ade_job_name: str = ''
 
