@@ -1,7 +1,6 @@
 from PyQt5.QtWidgets import QMessageBox
 from adegui import Config
 
-
 cwd = Config.adegui_workdir
 
 
@@ -9,7 +8,7 @@ def write_ade_script_from_config(obj) -> None:
     """
     Writes an autodE run script (Python) based on current config vars (adegui.Config)
     Name of generated script is "aderun.py"
-    :param obj: The parent QWidget instance (for the warning windows)
+    :param obj: The parent QWidget instance (required for the warning windows)
     :return: None
     """
     # TODO: make the name of script editable (??)
@@ -17,8 +16,14 @@ def write_ade_script_from_config(obj) -> None:
     gen_script = []  # list of lines of text for the script to be generated
 
     # first import and set the autodE config variables
-    gen_script.append("import autode as ade\n")
+    gen_script.append("import autode as ade\n\n")
     gen_script.append(f"ade.Config.n_cores = {Config.ade_n_cores}\n")
+    gen_script.append("\n")
+
+    # setup the lmethod and hmethod
+    gen_script.append(f"ade.Config.lcode = '{Config.ade_lmethod}'\n")
+    gen_script.append(f"ade.Config.hcode = '{Config.ade_hmethod}'\n")
+    gen_script.append("\n")  # line break to make it look better
 
     # then set reactants and products
     rct_and_prod = ''  # need for the final reaction setup line
@@ -33,7 +38,7 @@ def write_ade_script_from_config(obj) -> None:
             gen_script.append(f"rct{index} = ade.Reactant(smiles='{rct_smi}')\n")
             rct_and_prod += f"rct{index},"
 
-    if Config.ade_prod_smis == ['','']:
+    if Config.ade_prod_smis == ['', '']:
         QMessageBox.warning(obj,
                             "autodE-GUI",
                             "There are no products! Unable to write script.")

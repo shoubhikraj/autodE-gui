@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QMainWindow, QVBoxLayout, QWidget
-from adegui.work_area import WorkAreaTabs
+from adegui.work_area.work_area import WorkAreaTabs
 from adegui.main_buttons import MainButtons
 
 

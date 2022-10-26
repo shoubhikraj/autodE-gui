@@ -1,5 +1,5 @@
 # defines the buttons in the main window
-from PyQt5.QtWidgets import QHBoxLayout, QPushButton, QWidget, QMessageBox, qApp
+from PyQt5.QtWidgets import QHBoxLayout, QPushButton, QWidget, qApp
 from PyQt5.QtCore import pyqtSlot
 from adegui.generate_script import write_ade_script_from_config
 

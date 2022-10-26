@@ -32,7 +32,7 @@ def _read_priv_rsrc_txt(fname: str) -> str:
     :param fname: Name of text file
     :return: String containing the contents of text file
     """
-    with importlib.resources.path('adegui.resources',str(fname)) as fh:
+    with importlib.resources.path('adegui.resources', str(fname)) as fh:
         text = fh.read_text()
     return text
 
