@@ -49,9 +49,19 @@ def write_ade_script_from_config(obj) -> None:
             rct_and_prod += f"prod{index},"
 
     # calculation setup
+
+    # Reaction profile =>
     if Config.ade_job_typ == 'Reaction Profile':
         gen_script.append(f"rxn = ade.Reaction({rct_and_prod})\n")
         gen_script.append(f"rxn.calculate_reaction_profile()")
+    # <=
+
+    # Transition state (adaptive) =>
+    if Config.ade_job_typ == "Transition State: adaptive":
+        gen_script.append(f"rxn = ade.Reaction({rct_and_prod})\n")
+        gen_script.append(f"rxn.locate_transition_state()\n")
+        gen_script.append("rxn.ts.print_xyz_file(filename='ts.xyz')\n")
+    # <=
 
     # (over)write script
     try:

@@ -45,7 +45,14 @@ class QMMethodSetupTab(QWidget):
     def lmethod_changed(self):
         Config.ade_lmethod = self.lmethod_drop_menu.currentText()
 
+
     @pyqtSlot()
     def hmethod_change(self):
-        Config.ade_hmethod = self.hmethod_drop_menu.currentText()
+        current_hmethod = self.hmethod_drop_menu.currentText()
+        if current_hmethod == 'Gaussian09': # fix the names of Gaussian
+            Config.ade_hmethod = 'G09'
+        elif current_hmethod == 'Gaussian16':
+            Config.ade_hmethod = 'G16'
+        else:
+            Config.ade_hmethod = current_hmethod
 
