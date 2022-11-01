@@ -12,6 +12,7 @@ from adegui.common import smiles_to_3d_rdkmol
 # file operations in this script so need workdir
 cwd = Config.adegui_workdir
 
+
 class MoleculeSelectTab(QWidget):
     """
     This area includes code for inputting SMILES or drawing
