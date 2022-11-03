@@ -10,7 +10,7 @@ from adegui import Config
 from adegui.common import smiles_to_3d_rdkmol
 
 # file operations in this script so need workdir
-cwd = Config.adegui_workdir
+scrdir = Config.adegui_scratchdir
 
 
 class MoleculeSelectTab(QWidget):
@@ -80,21 +80,21 @@ class MoleculeDrawOrType(QWidget):
     @pyqtSlot()
     def molecule_written(self):
         """ Triggered when molecule is typed in textbox """
-        os.remove(cwd+self.mol_fname) if os.path.isfile(cwd+self.mol_fname) else None
+        os.remove(scrdir/self.mol_fname) if os.path.isfile(scrdir/self.mol_fname) else None
         return None
 
     @pyqtSlot()
     def molecule_drawn(self):
         """ Triggered when molecule is drawn """
-        if not os.path.isfile(cwd+self.mol_fname):
+        if not os.path.isfile(scrdir/self.mol_fname):
             mol = smiles_to_3d_rdkmol(self.smi_textbox.text())
             # if there is no SMILES or illegal SMILES, it will go to default CH4
             if mol is None:
                 mol = smiles_to_3d_rdkmol('C')
-            rdkit.Chem.MolToMolFile(mol, cwd+self.mol_fname)
+            rdkit.Chem.MolToMolFile(mol, str(scrdir/self.mol_fname))
         # else carry on to display
-        subprocess.run([Config.adegui_moleditor, cwd+self.mol_fname])
-        mol = rdkit.Chem.MolFromMolFile(cwd+self.mol_fname)
+        subprocess.run([Config.adegui_moleditor, str(scrdir/self.mol_fname)])
+        mol = rdkit.Chem.MolFromMolFile(str(scrdir/self.mol_fname))
         smi = rdkit.Chem.MolToSmiles(mol)
         self.smi_textbox.setText(smi)
         return None

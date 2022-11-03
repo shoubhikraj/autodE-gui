@@ -3,10 +3,14 @@
 import platform
 import subprocess
 from typing import List
+import tempfile, pathlib, atexit, shutil, errno
 
 class _AdeGuiConfig:
     def __init__(self):
         self.adegui_workdir: str = ''  # empty means current working dir for python
+
+        temp_dir = tempfile.mkdtemp() # temp directory
+        self.adegui_scratchdir: pathlib.Path = pathlib.Path(temp_dir)
 
         if platform.system() == 'Linux':
             self.adegui_moleditor: str = subprocess.check_output(['which','avogadro']).decode('utf-8').strip()
@@ -30,6 +34,15 @@ class _AdeGuiConfig:
         self.ade_lmethod: str = ''  # chosen lmethod
         self.ade_hmethod: str = ''  # chosen hmethod
 
+        atexit.register(self._cleanup)
+
+    def _cleanup(self):
+        try:
+            shutil.rmtree(self.adegui_scratchdir)  # remove the temp directory
+        except OSError as exc:
+            if exc.errno != errno.ENOENT:
+                raise
+        # https://stackoverflow.com/questions/6884991/how-to-delete-a-directory-created-with-tempfile-mkdtemp
 
 
 Config = _AdeGuiConfig()
