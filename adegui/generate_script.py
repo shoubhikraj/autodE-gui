@@ -1,7 +1,9 @@
+import pathlib
+
 from PyQt5.QtWidgets import QMessageBox
 from adegui import Config
 
-cwd = Config.adegui_workdir
+cwd = Config.adegui_workdir # TODO replace with a prompt for where to save file
 
 
 def write_ade_script_from_config(obj) -> None:
@@ -28,24 +30,37 @@ def write_ade_script_from_config(obj) -> None:
     # then set reactants and products
     rct_and_prod = ''  # need for the final reaction setup line
 
-    if Config.ade_rct_mols == ['', '']:
+    if (Config.ade_rct_mols[0].molecule, Config.ade_rct_mols[1].molecule) == ('', ''):
         QMessageBox.warning(obj,
                             "autodE-GUI",
                             "There are no reactants! Unable to write script.")
         return None
-    for index, rct_smi in enumerate(Config.ade_rct_mols):
-        if not rct_smi == '':
-            gen_script.append(f"rct{index} = ade.Reactant(smiles='{rct_smi}')\n")
+    for index, rct_molecule in enumerate(Config.ade_rct_mols):
+        if not rct_molecule.molecule == '':
+            if isinstance(rct_molecule.molecule, pathlib.Path):
+                xyz_fname = rct_molecule.molecule.name
+                gen_script.append(f"rct{index} = ade.Reactant('{xyz_fname}', ")
+            elif isinstance(rct_molecule.molecule, str):
+                gen_script.append(f"rct{index} = ade.Reactant(smiles='{rct_molecule.molecule}', ")
+            gen_script.append(f"charge={rct_molecule.charge}, "
+                              f"mult={rct_molecule.mult})\n")
             rct_and_prod += f"rct{index},"
 
-    if Config.ade_prod_mols == ['', '']:
+    if (Config.ade_prod_mols[0].molecule, Config.ade_prod_mols[1].molecule) == ('', ''):
         QMessageBox.warning(obj,
                             "autodE-GUI",
                             "There are no products! Unable to write script.")
         return None
-    for index, prod_smi in enumerate(Config.ade_prod_mols):
-        if not prod_smi == '':
-            gen_script.append(f"prod{index} = ade.Product(smiles='{prod_smi}')\n")
+    for index, prod_molecule in enumerate(Config.ade_prod_mols):
+        if not prod_molecule.molecule == '':
+            if isinstance(prod_molecule.molecule, pathlib.Path):
+                xyz_fname = prod_molecule.molecule.name
+                gen_script.append(f"prod{index} = ade.Product('{xyz_fname}', ")
+
+            elif isinstance(prod_molecule.molecule, str):
+                gen_script.append(f"prod{index} = ade.Product(smiles='{prod_molecule.molecule}', ")
+            gen_script.append(f"charge={prod_molecule.charge}, "
+                              f"mult={prod_molecule.mult})\n")
             rct_and_prod += f"prod{index},"
 
     # calculation setup

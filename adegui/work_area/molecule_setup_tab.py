@@ -6,8 +6,9 @@ import rdkit.Chem
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import (QWidget, QHBoxLayout, QGroupBox,
                              QVBoxLayout, QLineEdit, QPushButton,
-                             QLabel)
+                             QLabel, QMessageBox)
 from adegui import Config
+from adegui.config import AdeGuiMolecule
 from adegui.common import smiles_to_3d_rdkmol
 
 # file operations in this script so need workdir
@@ -52,10 +53,11 @@ class MoleculeDrawOrType(QWidget):
     Initialize by passing a list of SMILES strings, and integer denoting position of the
     list that is modified by widget
     """
-    def __init__(self, mols_list: List[dict], index: int, rct_or_prod: str):
+    def __init__(self, mols_list: List[AdeGuiMolecule], index: int, rct_or_prod: str):
         """
         Initialize a molecule draw/type widget
-        :param mols_list: List of molecules, each molecule is a dict of filename, charge, mult
+
+        :param mols_list: List of molecules, each molecule has filename/smiles, charge, mult
         :param index: index to modify in list
         :param rct_or_prod: needed to get unique filenames on disk
         """
@@ -63,11 +65,10 @@ class MoleculeDrawOrType(QWidget):
         self.mol_list = mols_list
         self.mol_index = index
         self.mol_fname = 'molecule-'+str(rct_or_prod)+str(index)+'.mol'
+        self.xyz_fname = self.mol_fname[:-4] + '.xyz'
 
         self.smi_textbox = QLineEdit()
         self.smi_textbox.textEdited.connect(self.molecule_written)
-        self.smi_textbox.textChanged.connect(self.molecule_changed)
-        self.mol_list[self.mol_index] = self.smi_textbox.text()  # initialize
         draw_btn = QPushButton("Draw")
         draw_btn.clicked.connect(self.molecule_drawn)
 
@@ -80,17 +81,25 @@ class MoleculeDrawOrType(QWidget):
     @pyqtSlot()
     def molecule_written(self):
         """ Triggered when molecule is typed in textbox """
-        mol = smiles_to_3d_rdkmol(self.smi_textbox.text())
+        self.mol_list[self.mol_index].molecule = self.smi_textbox.text()  # assign SMILES
+        # warning! This does not check if SMILES is sane
         return None
 
     @pyqtSlot()
     def molecule_drawn(self):
         """ Triggered when molecule is drawn """
-        if not os.path.isfile(scrdir/self.mol_fname):
+        # if there is no editor then warn
+        if Config.adegui_moleditor is None:
+            QMessageBox.warning(self,
+                                "autodE-GUI",
+                                "No molecule drawing software available!")
+            return None
+
+        if not os.path.isfile(scrdir/self.mol_fname):  # if previous file does not exist make new mol
             mol = smiles_to_3d_rdkmol(self.smi_textbox.text())
             # if there is no SMILES or illegal SMILES, it will go to default CH4
             if mol is None:
-                print('\a') # warning! bad SMILES
+                self.smi_textbox.setText('')  # empty textbox
                 mol = smiles_to_3d_rdkmol('C')
             rdkit.Chem.MolToMolFile(mol, str(scrdir/self.mol_fname))
         # use editor to edit the molfile
@@ -99,18 +108,14 @@ class MoleculeDrawOrType(QWidget):
         # try to display it as sanitized SMILES
         mol_copy = rdkit.Chem.Mol(mol)  # get a copy
         istat = rdkit.Chem.SanitizeMol(mol_copy, catchErrors=True)
-        if istat == 0:
+        if istat == 0: # if sanitize possible
             mol_copy = rdkit.Chem.RemoveHs(mol_copy)
             smi = rdkit.Chem.MolToSmiles(mol_copy)
             self.smi_textbox.setText(smi)
         else:  # just display unsanitized version
             smi = rdkit.Chem.MolToSmiles(mol)
             self.smi_textbox.setText(smi)
-        # then save the path of mol file
-        self.mol_list[self.mol_index]["molecule"] = scrdir/self.mol_fname
+        # then convert to xyz and save its path
+        rdkit.Chem.MolToXYZFile(mol, self.xyz_fname)
+        self.mol_list[self.mol_index].molecule = scrdir/self.xyz_fname
         return None
-
-    @pyqtSlot()
-    def molecule_changed(self):
-        """ Any change to molecule (typing or drawing) """
-        self.mol_list[self.mol_index] = self.smi_textbox.text()
