@@ -1,9 +1,10 @@
 # Contains the config class which is instantiated once at the beginning
 # of the program
-import platform
-import subprocess
+import platform, subprocess
 from typing import List
-import tempfile, pathlib, atexit, shutil, errno
+import tempfile, pathlib, atexit, shutil
+import errno
+
 
 class _AdeGuiConfig:
     def __init__(self):
@@ -11,7 +12,7 @@ class _AdeGuiConfig:
 
         temp_dir = tempfile.mkdtemp() # temp directory
         self.adegui_scratchdir: pathlib.Path = pathlib.Path(temp_dir)
-
+        # TODO use python inbuilt to look for avogadro and then use UI for error
         if platform.system() == 'Linux':
             self.adegui_moleditor: str = subprocess.check_output(['which','avogadro']).decode('utf-8').strip()
             # path of the molecule editor
@@ -24,8 +25,11 @@ class _AdeGuiConfig:
         self.ade_n_cores: int = 8  # Number of cores in autodE
         self.ade_job_name: str = ''
 
-        self.ade_rct_smis: list = ['', '']  # Reactant(s)
-        self.ade_prod_smis: list = ['', '']  # Product(s)
+        # initialize 2 reactant and 2 products
+        self.ade_rct_mols: List[dict] = [{"fname": "", "charge": 0, "mult": 1},
+                                         {"fname": "", "charge": 0, "mult": 1}]  # Reactant(s)
+        self.ade_prod_mols: List[dict] = [{"fname": "", "charge": 0, "mult": 1},
+                                          {"fname": "", "charge": 0, "mult": 1}]  # Product(s)
 
         self.ade_job_typ: str = ''  # Job Type
 

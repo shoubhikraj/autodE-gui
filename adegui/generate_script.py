@@ -28,22 +28,22 @@ def write_ade_script_from_config(obj) -> None:
     # then set reactants and products
     rct_and_prod = ''  # need for the final reaction setup line
 
-    if Config.ade_rct_smis == ['', '']:
+    if Config.ade_rct_mols == ['', '']:
         QMessageBox.warning(obj,
                             "autodE-GUI",
                             "There are no reactants! Unable to write script.")
         return None
-    for index, rct_smi in enumerate(Config.ade_rct_smis):
+    for index, rct_smi in enumerate(Config.ade_rct_mols):
         if not rct_smi == '':
             gen_script.append(f"rct{index} = ade.Reactant(smiles='{rct_smi}')\n")
             rct_and_prod += f"rct{index},"
 
-    if Config.ade_prod_smis == ['', '']:
+    if Config.ade_prod_mols == ['', '']:
         QMessageBox.warning(obj,
                             "autodE-GUI",
                             "There are no products! Unable to write script.")
         return None
-    for index, prod_smi in enumerate(Config.ade_prod_smis):
+    for index, prod_smi in enumerate(Config.ade_prod_mols):
         if not prod_smi == '':
             gen_script.append(f"prod{index} = ade.Product(smiles='{prod_smi}')\n")
             rct_and_prod += f"prod{index},"

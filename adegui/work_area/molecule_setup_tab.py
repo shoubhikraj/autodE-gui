@@ -1,5 +1,6 @@
 import os
 import subprocess
+from typing import List
 
 import rdkit.Chem
 from PyQt5.QtCore import pyqtSlot
@@ -27,8 +28,8 @@ class MoleculeSelectTab(QWidget):
         # SMILES input or draw reactants
         rct_input = QGroupBox("Reactant(s)")
         rct_layout = QVBoxLayout()
-        rct_layout.addWidget(MoleculeDrawOrType(Config.ade_rct_smis, 0, 'rct'))
-        rct_layout.addWidget(MoleculeDrawOrType(Config.ade_rct_smis, 1, 'rct'))
+        rct_layout.addWidget(MoleculeDrawOrType(Config.ade_rct_mols, 0, 'rct'))
+        rct_layout.addWidget(MoleculeDrawOrType(Config.ade_rct_mols, 1, 'rct'))
         rct_layout.addStretch()  # to prevent unnecessary whitespace between widgets
         # two reactants right now can add more later
         rct_input.setLayout(rct_layout)
@@ -36,8 +37,8 @@ class MoleculeSelectTab(QWidget):
         # SMILES input or draw products
         prod_input = QGroupBox("Product(s)")
         prod_layout = QVBoxLayout()
-        prod_layout.addWidget(MoleculeDrawOrType(Config.ade_prod_smis, 0, 'prod'))
-        prod_layout.addWidget(MoleculeDrawOrType(Config.ade_prod_smis, 1, 'prod'))
+        prod_layout.addWidget(MoleculeDrawOrType(Config.ade_prod_mols, 0, 'prod'))
+        prod_layout.addWidget(MoleculeDrawOrType(Config.ade_prod_mols, 1, 'prod'))
         prod_layout.addStretch()
         prod_input.setLayout(prod_layout)
 
@@ -52,22 +53,22 @@ class MoleculeDrawOrType(QWidget):
     Initialize by passing a list of SMILES strings, and integer denoting position of the
     list that is modified by widget
     """
-    def __init__(self, smi_list: list, index: int, rct_or_prod: str):
+    def __init__(self, mols_list: List[dict], index: int, rct_or_prod: str):
         """
         Initialize a molecule draw/type widget
-        :param smi_list: List of SMILES strings
+        :param mols_list: List of molecules, each molecule is a dict of filename, charge, mult
         :param index: index to modify in list
         :param rct_or_prod: needed to get unique filenames on disk
         """
         super().__init__()
-        self.smi_list = smi_list
+        self.mol_list = mols_list
         self.smi_index = index
         self.mol_fname = 'molecule-'+str(rct_or_prod)+str(index)+'.mol'
 
         self.smi_textbox = QLineEdit()
         self.smi_textbox.textEdited.connect(self.molecule_written)
         self.smi_textbox.textChanged.connect(self.molecule_changed)
-        self.smi_list[self.smi_index] = self.smi_textbox.text()  # initialize
+        self.mol_list[self.smi_index] = self.smi_textbox.text()  # initialize
         draw_btn = QPushButton("Draw")
         draw_btn.clicked.connect(self.molecule_drawn)
 
@@ -102,4 +103,4 @@ class MoleculeDrawOrType(QWidget):
     @pyqtSlot()
     def molecule_changed(self):
         """ Any change to molecule (typing or drawing) """
-        self.smi_list[self.smi_index] = self.smi_textbox.text()
+        self.mol_list[self.smi_index] = self.smi_textbox.text()
