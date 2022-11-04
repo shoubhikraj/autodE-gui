@@ -11,7 +11,8 @@ class _AdeGuiConfig:
         self.adegui_workdir: str = ''  # empty means current working dir for python
 
         temp_dir = tempfile.mkdtemp() # temp directory
-        self.adegui_scratchdir: pathlib.Path = pathlib.Path(temp_dir)
+        #self.adegui_scratchdir: pathlib.Path = pathlib.Path(temp_dir)
+        self.adegui_scratchdir = pathlib.Path.cwd()
         # TODO use python inbuilt to look for avogadro and then use UI for error
         if platform.system() == 'Linux':
             self.adegui_moleditor: str = subprocess.check_output(['which','avogadro']).decode('utf-8').strip()
@@ -26,10 +27,11 @@ class _AdeGuiConfig:
         self.ade_job_name: str = ''
 
         # initialize 2 reactant and 2 products
-        self.ade_rct_mols: List[dict] = [{"fname": "", "charge": 0, "mult": 1},
-                                         {"fname": "", "charge": 0, "mult": 1}]  # Reactant(s)
-        self.ade_prod_mols: List[dict] = [{"fname": "", "charge": 0, "mult": 1},
-                                          {"fname": "", "charge": 0, "mult": 1}]  # Product(s)
+        self.ade_rct_mols: List[dict] = [{"molecule": None, "charge": 0, "mult": 1},
+                                         {"molecule": None, "charge": 0, "mult": 1}]  # Reactant(s)
+        self.ade_prod_mols: List[dict] = [{"molecule": None, "charge": 0, "mult": 1},
+                                          {"molecule": None, "charge": 0, "mult": 1}]  # Product(s)
+        # fname: pathlib Path, charge and mult are integers
 
         self.ade_job_typ: str = ''  # Job Type
 
@@ -38,7 +40,7 @@ class _AdeGuiConfig:
         self.ade_lmethod: str = ''  # chosen lmethod
         self.ade_hmethod: str = ''  # chosen hmethod
 
-        atexit.register(self._cleanup)
+        #atexit.register(self._cleanup)
 
     def _cleanup(self):
         try:

@@ -19,7 +19,6 @@ class MoleculeSelectTab(QWidget):
     This area includes code for inputting SMILES or drawing
     a molecule for reactant and product
     """
-
     def __init__(self):
         super().__init__()
         # setup grid
@@ -62,13 +61,13 @@ class MoleculeDrawOrType(QWidget):
         """
         super().__init__()
         self.mol_list = mols_list
-        self.smi_index = index
+        self.mol_index = index
         self.mol_fname = 'molecule-'+str(rct_or_prod)+str(index)+'.mol'
 
         self.smi_textbox = QLineEdit()
         self.smi_textbox.textEdited.connect(self.molecule_written)
         self.smi_textbox.textChanged.connect(self.molecule_changed)
-        self.mol_list[self.smi_index] = self.smi_textbox.text()  # initialize
+        self.mol_list[self.mol_index] = self.smi_textbox.text()  # initialize
         draw_btn = QPushButton("Draw")
         draw_btn.clicked.connect(self.molecule_drawn)
 
@@ -81,7 +80,7 @@ class MoleculeDrawOrType(QWidget):
     @pyqtSlot()
     def molecule_written(self):
         """ Triggered when molecule is typed in textbox """
-        os.remove(scrdir/self.mol_fname) if os.path.isfile(scrdir/self.mol_fname) else None
+        mol = smiles_to_3d_rdkmol(self.smi_textbox.text())
         return None
 
     @pyqtSlot()
@@ -91,16 +90,27 @@ class MoleculeDrawOrType(QWidget):
             mol = smiles_to_3d_rdkmol(self.smi_textbox.text())
             # if there is no SMILES or illegal SMILES, it will go to default CH4
             if mol is None:
+                print('\a') # warning! bad SMILES
                 mol = smiles_to_3d_rdkmol('C')
             rdkit.Chem.MolToMolFile(mol, str(scrdir/self.mol_fname))
-        # else carry on to display
+        # use editor to edit the molfile
         subprocess.run([Config.adegui_moleditor, str(scrdir/self.mol_fname)])
-        mol = rdkit.Chem.MolFromMolFile(str(scrdir/self.mol_fname))
-        smi = rdkit.Chem.MolToSmiles(mol)
-        self.smi_textbox.setText(smi)
+        mol = rdkit.Chem.MolFromMolFile(str(scrdir/self.mol_fname), sanitize=False, removeHs=False)
+        # try to display it as sanitized SMILES
+        mol_copy = rdkit.Chem.Mol(mol)  # get a copy
+        istat = rdkit.Chem.SanitizeMol(mol_copy, catchErrors=True)
+        if istat == 0:
+            mol_copy = rdkit.Chem.RemoveHs(mol_copy)
+            smi = rdkit.Chem.MolToSmiles(mol_copy)
+            self.smi_textbox.setText(smi)
+        else:  # just display unsanitized version
+            smi = rdkit.Chem.MolToSmiles(mol)
+            self.smi_textbox.setText(smi)
+        # then save the path of mol file
+        self.mol_list[self.mol_index]["molecule"] = scrdir/self.mol_fname
         return None
 
     @pyqtSlot()
     def molecule_changed(self):
         """ Any change to molecule (typing or drawing) """
-        self.mol_list[self.smi_index] = self.smi_textbox.text()
+        self.mol_list[self.mol_index] = self.smi_textbox.text()
