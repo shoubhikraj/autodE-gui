@@ -76,13 +76,14 @@ class MoleculeDrawOrType(QWidget):
         upper_bar_layout.addWidget(QLabel("SMILES:"), 0)
         upper_bar_layout.addWidget(self.smi_textbox, 2)
         upper_bar_layout.addWidget(draw_btn, 1)
+        upper_bar_layout.setContentsMargins(0, 0, 0, 0)
         upper_bar = QWidget()
         upper_bar.setLayout(upper_bar_layout)
 
-        self.charge_dial = QSpinBox()
+        self.charge_dial = QSpinBox()  # set the charge
         self.charge_dial.setRange(-20, 20)
         self.charge_dial.valueChanged.connect(self.charge_changed)
-        self.mult_dial = QSpinBox()
+        self.mult_dial = QSpinBox()  # set the multiplicity
         self.mult_dial.setRange(1, 20)
         self.mult_dial.valueChanged.connect(self.mult_changed)
 
@@ -92,13 +93,14 @@ class MoleculeDrawOrType(QWidget):
         lower_bar_layout.addStretch(1)
         lower_bar_layout.addWidget(QLabel("Multiplicity:"), stretch=0)
         lower_bar_layout.addWidget(self.mult_dial, stretch=1)
+        lower_bar_layout.setContentsMargins(0, 0, 0, 0)  # remove padding
         lower_bar = QWidget()
         lower_bar.setLayout(lower_bar_layout)
 
         large_layout = QVBoxLayout()
         large_layout.addWidget(upper_bar)
         large_layout.addWidget(lower_bar)
-
+        large_layout.setContentsMargins(0, 5, 0, 25)
         self.setLayout(large_layout)
 
     @pyqtSlot()
