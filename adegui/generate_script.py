@@ -1,20 +1,25 @@
-import pathlib
+import pathlib, shutil
 
-from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QMessageBox, QFileDialog
 from adegui import Config
-
-cwd = Config.adegui_workdir # TODO replace with a prompt for where to save file
 
 
 def write_ade_script_from_config(obj) -> None:
     """
     Writes an autodE run script (Python) based on current config vars (adegui.Config)
-    Name of generated script is "aderun.py"
+
     :param obj: The parent QWidget instance (required for the warning windows)
     :return: None
     """
-    # TODO: make the name of script editable (??)
-    fname = 'aderun.py'  # name of file <= should this be changeable?
+    save_fname, _ = QFileDialog.getSaveFileName(obj,
+                                                caption="Save autodE script",
+                                                filter="Python Files (*.py)")
+    if save_fname == '':
+        return None
+    else:
+        save_fpath = pathlib.Path(save_fname)
+    cwd_path = save_fpath.parent  # get path for the working directory (from save file dialog)
+
     gen_script = []  # list of lines of text for the script to be generated
 
     # first import and set the autodE config variables
@@ -40,6 +45,7 @@ def write_ade_script_from_config(obj) -> None:
             if isinstance(rct_molecule.molecule, pathlib.Path):
                 xyz_fname = rct_molecule.molecule.name
                 gen_script.append(f"rct{index} = ade.Reactant('{xyz_fname}', ")
+                shutil.copyfile(rct_molecule.molecule, cwd_path/xyz_fname)
             elif isinstance(rct_molecule.molecule, str):
                 gen_script.append(f"rct{index} = ade.Reactant(smiles='{rct_molecule.molecule}', ")
             gen_script.append(f"charge={rct_molecule.charge}, "
@@ -56,7 +62,7 @@ def write_ade_script_from_config(obj) -> None:
             if isinstance(prod_molecule.molecule, pathlib.Path):
                 xyz_fname = prod_molecule.molecule.name
                 gen_script.append(f"prod{index} = ade.Product('{xyz_fname}', ")
-
+                shutil.copyfile(prod_molecule.molecule, cwd_path/xyz_fname)
             elif isinstance(prod_molecule.molecule, str):
                 gen_script.append(f"prod{index} = ade.Product(smiles='{prod_molecule.molecule}', ")
             gen_script.append(f"charge={prod_molecule.charge}, "
@@ -80,7 +86,7 @@ def write_ade_script_from_config(obj) -> None:
 
     # (over)write script
     try:
-        with open(cwd + fname, 'w') as fh:
+        with open(save_fpath, 'w') as fh:
             fh.writelines(gen_script)
         # if success
         QMessageBox.information(obj, "autodE-GUI", "Finished generating script file")

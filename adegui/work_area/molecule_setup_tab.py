@@ -11,7 +11,7 @@ from adegui import Config
 from adegui.config import AdeGuiMolecule
 from adegui.common import smiles_to_3d_rdkmol
 
-# file operations in this script so need workdir
+# file operations in this script so need scratchdir
 scrdir = Config.adegui_scratchdir
 
 
