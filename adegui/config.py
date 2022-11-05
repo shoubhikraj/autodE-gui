@@ -28,7 +28,6 @@ class AdeGuiMolecule:
 class _AdeGuiConfig:
     def __init__(self):
 
-        self.adegui_workdir: str = ''  # empty means current working dir for python
         temp_dir = tempfile.mkdtemp() # temp directory
         #self.adegui_scratchdir: pathlib.Path = pathlib.Path(temp_dir)
         self.adegui_scratchdir = pathlib.Path.cwd()
