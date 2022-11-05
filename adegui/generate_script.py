@@ -11,6 +11,19 @@ def write_ade_script_from_config(obj) -> None:
     :param obj: The parent QWidget instance (required for the warning windows)
     :return: None
     """
+
+    # stop if there are no reactants or products
+    if (Config.ade_rct_mols[0].molecule, Config.ade_rct_mols[1].molecule) == ('', ''):
+        QMessageBox.warning(obj,
+                            "autodE-GUI",
+                            "There are no reactants! Unable to write script.")
+        return None
+    if (Config.ade_prod_mols[0].molecule, Config.ade_prod_mols[1].molecule) == ('', ''):
+        QMessageBox.warning(obj,
+                            "autodE-GUI",
+                            "There are no products! Unable to write script.")
+        return None
+
     save_fname, _ = QFileDialog.getSaveFileName(obj,
                                                 caption="Save autodE script",
                                                 filter="Python Files (*.py)")
@@ -19,6 +32,8 @@ def write_ade_script_from_config(obj) -> None:
     else:
         save_fpath = pathlib.Path(save_fname)
     cwd_path = save_fpath.parent  # get path for the working directory (from save file dialog)
+
+
 
     gen_script = []  # list of lines of text for the script to be generated
 
@@ -35,11 +50,6 @@ def write_ade_script_from_config(obj) -> None:
     # then set reactants and products
     rct_and_prod = ''  # need for the final reaction setup line
 
-    if (Config.ade_rct_mols[0].molecule, Config.ade_rct_mols[1].molecule) == ('', ''):
-        QMessageBox.warning(obj,
-                            "autodE-GUI",
-                            "There are no reactants! Unable to write script.")
-        return None
     for index, rct_molecule in enumerate(Config.ade_rct_mols):
         if not rct_molecule.molecule == '':
             if isinstance(rct_molecule.molecule, pathlib.Path):
@@ -52,11 +62,7 @@ def write_ade_script_from_config(obj) -> None:
                               f"mult={rct_molecule.mult})\n")
             rct_and_prod += f"rct{index},"
 
-    if (Config.ade_prod_mols[0].molecule, Config.ade_prod_mols[1].molecule) == ('', ''):
-        QMessageBox.warning(obj,
-                            "autodE-GUI",
-                            "There are no products! Unable to write script.")
-        return None
+
     for index, prod_molecule in enumerate(Config.ade_prod_mols):
         if not prod_molecule.molecule == '':
             if isinstance(prod_molecule.molecule, pathlib.Path):

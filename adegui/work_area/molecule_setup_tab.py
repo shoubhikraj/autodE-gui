@@ -6,7 +6,7 @@ import rdkit.Chem
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import (QWidget, QHBoxLayout, QGroupBox,
                              QVBoxLayout, QLineEdit, QPushButton,
-                             QLabel, QMessageBox)
+                             QLabel, QMessageBox, QSpinBox)
 from adegui import Config
 from adegui.config import AdeGuiMolecule
 from adegui.common import smiles_to_3d_rdkmol
@@ -72,11 +72,34 @@ class MoleculeDrawOrType(QWidget):
         draw_btn = QPushButton("Draw")
         draw_btn.clicked.connect(self.molecule_drawn)
 
-        layout = QHBoxLayout()
-        layout.addWidget(QLabel("SMILES:"), 0)
-        layout.addWidget(self.smi_textbox, 2)
-        layout.addWidget(draw_btn, 1)
-        self.setLayout(layout)
+        upper_bar_layout = QHBoxLayout()
+        upper_bar_layout.addWidget(QLabel("SMILES:"), 0)
+        upper_bar_layout.addWidget(self.smi_textbox, 2)
+        upper_bar_layout.addWidget(draw_btn, 1)
+        upper_bar = QWidget()
+        upper_bar.setLayout(upper_bar_layout)
+
+        self.charge_dial = QSpinBox()
+        self.charge_dial.setRange(-20, 20)
+        self.charge_dial.valueChanged.connect(self.charge_changed)
+        self.mult_dial = QSpinBox()
+        self.mult_dial.setRange(1, 20)
+        self.mult_dial.valueChanged.connect(self.mult_changed)
+
+        lower_bar_layout = QHBoxLayout()
+        lower_bar_layout.addWidget(QLabel("Charge:"), stretch=0)
+        lower_bar_layout.addWidget(self.charge_dial, stretch=1)
+        lower_bar_layout.addStretch(1)
+        lower_bar_layout.addWidget(QLabel("Multiplicity:"), stretch=0)
+        lower_bar_layout.addWidget(self.mult_dial, stretch=1)
+        lower_bar = QWidget()
+        lower_bar.setLayout(lower_bar_layout)
+
+        large_layout = QVBoxLayout()
+        large_layout.addWidget(upper_bar)
+        large_layout.addWidget(lower_bar)
+
+        self.setLayout(large_layout)
 
     @pyqtSlot()
     def molecule_written(self):
@@ -119,3 +142,16 @@ class MoleculeDrawOrType(QWidget):
         rdkit.Chem.MolToXYZFile(mol, self.xyz_fname)
         self.mol_list[self.mol_index].molecule = scrdir/self.xyz_fname
         return None
+
+    @pyqtSlot()
+    def charge_changed(self):
+        charge = self.charge_dial.value()
+        self.mol_list[self.mol_index].charge = charge
+
+    @pyqtSlot()
+    def mult_changed(self):
+        mult = self.mult_dial.value()
+        if mult >= 1:
+            self.mol_list[self.mol_index].mult = mult
+        else:
+            self.mult_dial.setValue(1)
