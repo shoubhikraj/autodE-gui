@@ -6,7 +6,8 @@ import rdkit.Chem
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import (QWidget, QHBoxLayout, QGroupBox,
                              QVBoxLayout, QLineEdit, QPushButton,
-                             QLabel, QMessageBox, QSpinBox)
+                             QLabel, QMessageBox, QSpinBox,
+                             QFrame)
 from adegui import Config
 from adegui.config import AdeGuiMolecule
 from adegui.common import smiles_to_3d_rdkmol
@@ -93,14 +94,15 @@ class MoleculeDrawOrType(QWidget):
         lower_bar_layout.addStretch(1)
         lower_bar_layout.addWidget(QLabel("Multiplicity:"), stretch=0)
         lower_bar_layout.addWidget(self.mult_dial, stretch=1)
-        lower_bar_layout.setContentsMargins(0, 0, 0, 0)  # remove padding
+        #lower_bar_layout.setContentsMargins(0, 0, 0, 0)  # remove padding
         lower_bar = QWidget()
         lower_bar.setLayout(lower_bar_layout)
 
         large_layout = QVBoxLayout()
         large_layout.addWidget(upper_bar)
         large_layout.addWidget(lower_bar)
-        large_layout.setContentsMargins(0, 5, 0, 25)
+        large_layout.addWidget(QHLine())
+
         self.setLayout(large_layout)
 
     @pyqtSlot()
@@ -108,6 +110,7 @@ class MoleculeDrawOrType(QWidget):
         """ Triggered when molecule is typed in textbox """
         self.mol_list[self.mol_index].molecule = self.smi_textbox.text()  # assign SMILES
         # warning! This does not check if SMILES is sane
+        if os.path.isfile(scrdir/self.mol_fname): os.remove(scrdir/self.mol_fname)  # remove old molfile
         return None
 
     @pyqtSlot()
@@ -133,7 +136,7 @@ class MoleculeDrawOrType(QWidget):
         # try to display it as sanitized SMILES
         mol_copy = rdkit.Chem.Mol(mol)  # get a copy
         istat = rdkit.Chem.SanitizeMol(mol_copy, catchErrors=True)
-        if istat == 0: # if sanitize possible
+        if istat == 0:  # if sanitize possible
             mol_copy = rdkit.Chem.RemoveHs(mol_copy)
             smi = rdkit.Chem.MolToSmiles(mol_copy)
             self.smi_textbox.setText(smi)
@@ -157,3 +160,14 @@ class MoleculeDrawOrType(QWidget):
             self.mol_list[self.mol_index].mult = mult
         else:
             self.mult_dial.setValue(1)
+
+
+class QHLine(QFrame):
+    """
+    Adds a horizontal line (PyQt)
+    """
+    def __init__(self):
+        super().__init__()
+        self.setFrameShape(QFrame.HLine)
+        self.setFrameShadow(QFrame.Sunken)
+

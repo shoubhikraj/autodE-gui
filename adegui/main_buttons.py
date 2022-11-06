@@ -22,6 +22,7 @@ class MainButtons(QWidget):
         btn_area_layout = QHBoxLayout()
         btn_area_layout.addWidget(btn1)  # first button
         btn_area_layout.addWidget(btn2)  # second button
+        btn_area_layout.addStretch()
         btn_area_layout.addWidget(btn3)  # third button
 
         self.setLayout(btn_area_layout)

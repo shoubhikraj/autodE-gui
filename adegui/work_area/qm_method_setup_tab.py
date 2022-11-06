@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import (QWidget, QGroupBox, QComboBox,
-                             QVBoxLayout, QHBoxLayout)
+                             QVBoxLayout, QHBoxLayout, QSizePolicy)
 from PyQt5.QtCore import pyqtSlot
 from adegui import Config
 
@@ -18,7 +18,8 @@ class QMMethodSetupTab(QWidget):
         for item in Config.ade_avail_lmethods:
             self.lmethod_drop_menu.addItem(item)
         Config.ade_lmethod = self.lmethod_drop_menu.currentText()  # initialize lmethod
-        self.lmethod_drop_menu.currentIndexChanged.connect(self.lmethod_changed)
+        self.lmethod_drop_menu.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Preferred)  # nicer UI
+        self.lmethod_drop_menu.currentIndexChanged.connect(self.lmethod_changed)  # signal connect
 
         lmethod_layout = QVBoxLayout()
         lmethod_layout.addWidget(self.lmethod_drop_menu)
@@ -30,6 +31,8 @@ class QMMethodSetupTab(QWidget):
         for item in Config.ade_avail_hmethods:
             self.hmethod_drop_menu.addItem(item)
         Config.ade_hmethod = self.hmethod_drop_menu.currentText()  # initialize hmethod
+        self.hmethod_drop_menu.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Preferred)  # nicer UI
+        self.hmethod_drop_menu.currentIndexChanged.connect(self.hmethod_changed)
 
         hmethod_layout = QVBoxLayout()
         hmethod_layout.addWidget(self.hmethod_drop_menu)
@@ -45,9 +48,8 @@ class QMMethodSetupTab(QWidget):
     def lmethod_changed(self):
         Config.ade_lmethod = self.lmethod_drop_menu.currentText()
 
-
     @pyqtSlot()
-    def hmethod_change(self):
+    def hmethod_changed(self):
         current_hmethod = self.hmethod_drop_menu.currentText()
         if current_hmethod == 'Gaussian09': # fix the names of Gaussian
             Config.ade_hmethod = 'G09'
