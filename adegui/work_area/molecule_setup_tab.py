@@ -74,10 +74,10 @@ class MoleculeDrawOrType(QWidget):
         draw_btn.clicked.connect(self.molecule_drawn)
 
         upper_bar_layout = QHBoxLayout()
-        upper_bar_layout.addWidget(QLabel("SMILES:"), 0)
-        upper_bar_layout.addWidget(self.smi_textbox, 2)
-        upper_bar_layout.addWidget(draw_btn, 1)
-        upper_bar_layout.setContentsMargins(0, 0, 0, 0)
+        upper_bar_layout.addWidget(QLabel("SMILES:"), stretch=0)
+        upper_bar_layout.addWidget(self.smi_textbox, stretch=2)
+        upper_bar_layout.addWidget(draw_btn, stretch=1)
+        #upper_bar_layout.setContentsMargins(5, 5, 5, 2)
         upper_bar = QWidget()
         upper_bar.setLayout(upper_bar_layout)
 
@@ -94,7 +94,7 @@ class MoleculeDrawOrType(QWidget):
         lower_bar_layout.addStretch(1)
         lower_bar_layout.addWidget(QLabel("Multiplicity:"), stretch=0)
         lower_bar_layout.addWidget(self.mult_dial, stretch=1)
-        #lower_bar_layout.setContentsMargins(0, 0, 0, 0)  # remove padding
+        #lower_bar_layout.setContentsMargins(5, 2, 5, 20)  # remove padding
         lower_bar = QWidget()
         lower_bar.setLayout(lower_bar_layout)
 
