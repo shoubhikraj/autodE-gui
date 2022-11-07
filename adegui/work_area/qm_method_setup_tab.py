@@ -18,7 +18,7 @@ class QMMethodSetupTab(QWidget):
         for item in Config.ade_avail_lmethods:
             self.lmethod_drop_menu.addItem(item)
         Config.ade_lmethod = self.lmethod_drop_menu.currentText()  # initialize lmethod
-        self.lmethod_drop_menu.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Preferred)  # nicer UI
+        self.lmethod_drop_menu.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Preferred)  # no horizontal stretch
         self.lmethod_drop_menu.currentIndexChanged.connect(self.lmethod_changed)  # signal connect
 
         lmethod_layout = QVBoxLayout()
@@ -31,7 +31,7 @@ class QMMethodSetupTab(QWidget):
         for item in Config.ade_avail_hmethods:
             self.hmethod_drop_menu.addItem(item)
         Config.ade_hmethod = self.hmethod_drop_menu.currentText()  # initialize hmethod
-        self.hmethod_drop_menu.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Preferred)  # nicer UI
+        self.hmethod_drop_menu.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Preferred)
         self.hmethod_drop_menu.currentIndexChanged.connect(self.hmethod_changed)
 
         hmethod_layout = QVBoxLayout()
@@ -39,7 +39,7 @@ class QMMethodSetupTab(QWidget):
         hmethod_layout.addStretch()
         hmethod_setup.setLayout(hmethod_layout)
 
-        large_layout = QHBoxLayout() # lmethod on left, hmethod on right
+        large_layout = QHBoxLayout()  # lmethod on left, hmethod on right
         large_layout.addWidget(lmethod_setup, stretch=2)
         large_layout.addWidget(hmethod_setup, stretch=3)
         self.setLayout(large_layout)
@@ -57,4 +57,3 @@ class QMMethodSetupTab(QWidget):
             Config.ade_hmethod = 'G16'
         else:
             Config.ade_hmethod = current_hmethod
-
