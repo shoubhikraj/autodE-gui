@@ -26,6 +26,9 @@ class AdeGuiMolecule:
 
 
 class _AdeGuiConfig:
+    """
+    Config class that holds all the necessary changes set by the GUI
+    """
     def __init__(self):
 
         temp_dir = tempfile.mkdtemp() # temp directory
@@ -65,4 +68,4 @@ class _AdeGuiConfig:
         # https://stackoverflow.com/questions/6884991/how-to-delete-a-directory-created-with-tempfile-mkdtemp
 
 
-Config = _AdeGuiConfig()
+Config = _AdeGuiConfig()  # initialize a single instance of the config that will be used package wide
