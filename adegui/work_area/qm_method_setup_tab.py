@@ -57,3 +57,13 @@ class QMMethodSetupTab(QWidget):
             Config.ade_hmethod = 'G16'
         else:
             Config.ade_hmethod = current_hmethod
+
+
+class QMOptionsSelectWidget(QWidget):
+    """
+    Sets up the widget where the basis set and functional of the QM Method can be changed
+    """
+    def __init__(self):
+        super().__init__()
+        layout = QHBoxLayout()
+        basis_menu = QComboBox()
