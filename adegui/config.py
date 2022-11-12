@@ -31,7 +31,7 @@ class _AdeGuiConfig:
     """
     def __init__(self):
 
-        temp_dir = tempfile.mkdtemp() # temp directory
+        #temp_dir = tempfile.mkdtemp() # temp directory
         #self.adegui_scratchdir: pathlib.Path = pathlib.Path(temp_dir)
         self.adegui_scratchdir = pathlib.Path.cwd()
 
@@ -51,10 +51,12 @@ class _AdeGuiConfig:
 
         self.ade_job_typ: str = ''  # Job Type
 
-        self.ade_avail_lmethods: List[str] = ['XTB', 'MOPAC']
-        self.ade_avail_hmethods: List[str] = ['ORCA', 'Gaussian09', 'Gaussian16', 'NWChem', 'QChem']
         self.ade_lmethod: str = ''  # chosen lmethod
         self.ade_hmethod: str = ''  # chosen hmethod
+        self.ade_hmethod_sp_basis: str = ''  # chosen basis set for single points
+        self.ade_hmethod_geom_basis: str = ''  # chosen basis set for geometry (gradient + hessian)
+        self.ade_hmethod_sp_func: str = ''  # functional for single points
+        self.ade_hmethod_geom_func: str = ''  # functional for geometry optimisation
 
         #atexit.register(self._cleanup)  # TODO activate this once debugging done
 

@@ -7,7 +7,7 @@ from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import (QWidget, QHBoxLayout, QGroupBox,
                              QVBoxLayout, QLineEdit, QPushButton,
                              QLabel, QMessageBox, QSpinBox,
-                             QFrame)
+                             QFrame, qApp, QStyle)
 from adegui import Config
 from adegui.config import AdeGuiMolecule
 from adegui.common import smiles_to_3d_rdkmol
@@ -71,6 +71,7 @@ class MoleculeDrawOrType(QWidget):
         self.smi_textbox = QLineEdit()
         self.smi_textbox.textEdited.connect(self.molecule_written)
         draw_btn = QPushButton("Draw")
+        draw_btn.setIcon(qApp.style().standardIcon(QStyle.SP_DialogResetButton))
         draw_btn.clicked.connect(self.molecule_drawn)
 
         upper_bar_layout = QHBoxLayout()
