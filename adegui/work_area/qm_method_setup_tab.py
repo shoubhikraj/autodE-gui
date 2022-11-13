@@ -96,6 +96,7 @@ class QMModifyWidget(QGroupBox):
         for basis_set in avail_basis_sets:
             self.basis_menu.addItem(basis_set)
         self.basis_menu.currentIndexChanged.connect(self.basis_changed)
+        self.basis_menu.setEditable(True)
         basis_layout = QHBoxLayout()
         basis_layout.addWidget(QLabel('Basis Set:'))
         basis_layout.addWidget(self.basis_menu)
@@ -106,6 +107,7 @@ class QMModifyWidget(QGroupBox):
         for functional in avail_functionals:
             self.func_menu.addItem(functional)
         self.func_menu.currentIndexChanged.connect(self.func_changed)
+        self.func_menu.setEditable(True)
         func_layout = QHBoxLayout()
         func_layout.addWidget(QLabel('Functional:'))
         func_layout.addWidget(self.func_menu)
@@ -132,6 +134,7 @@ class QMModifyWidget(QGroupBox):
     def func_changed(self):
         func_selected = self.func_menu.currentText()
         if func_selected == '(default)': func_selected = ''
+        if func_selected == 'M06-2X': func_selected = 'M062X'
         if self.sp_or_geom_mod == 'sp':
             Config.ade_hmethod_sp_func = func_selected
         elif self.sp_or_geom_mod == 'geom':

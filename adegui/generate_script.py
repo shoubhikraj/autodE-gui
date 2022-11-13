@@ -34,18 +34,31 @@ def write_ade_script_from_config(obj) -> None:
     cwd_path = save_fpath.parent  # get path for the working directory (from save file dialog)
 
 
-
     gen_script = []  # list of lines of text for the script to be generated
 
     # first import and set the autodE config variables
     gen_script.append("import autode as ade\n\n")
     gen_script.append(f"ade.Config.n_cores = {Config.ade_n_cores}\n")
-    gen_script.append("\n")
+    gen_script.append("\n")  # line breaks to make it look better
 
     # setup the lmethod and hmethod
     gen_script.append(f"ade.Config.lcode = '{Config.ade_lmethod}'\n")
     gen_script.append(f"ade.Config.hcode = '{Config.ade_hmethod}'\n")
-    gen_script.append("\n")  # line break to make it look better
+
+    # options for hmethod (basis and functional)
+    if Config.ade_hmethod_sp_basis != '':
+        gen_script.append(f"ade.Config.{Config.ade_hmethod}.keywords."
+                          f"sp.basis_set = '{Config.ade_hmethod_sp_basis}'\n")
+    if Config.ade_hmethod_sp_func != '':
+        gen_script.append(f"ade.Config.{Config.ade_hmethod}.keywords."
+                          f"sp.functional = '{Config.ade_hmethod_sp_func}'\n")
+    if Config.ade_hmethod_geom_basis != '':
+        gen_script.append(f"ade.Config.{Config.ade_hmethod}.keywords."
+                          f"set_opt_basis('{Config.ade_hmethod_geom_basis}')\n")
+    if Config.ade_hmethod_geom_func != '':
+        gen_script.append(f"ade.Config.{Config.ade_hmethod}.keywords."
+                          f"set_opt_functional('{Config.ade_hmethod_geom_func}')\n")
+    gen_script.append("\n")
 
     # then set reactants and products
     rct_and_prod = ''  # need for the final reaction setup line
@@ -74,6 +87,7 @@ def write_ade_script_from_config(obj) -> None:
             gen_script.append(f"charge={prod_molecule.charge}, "
                               f"mult={prod_molecule.mult})\n")
             rct_and_prod += f"prod{index},"
+    gen_script.append("\n")
 
     # calculation setup
 
