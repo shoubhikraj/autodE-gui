@@ -46,6 +46,7 @@ def write_ade_script_from_config(obj) -> None:
     gen_script.append(f"ade.Config.hcode = '{Config.ade_hmethod}'\n")
 
     # options for hmethod (basis and functional)
+    # TODO what is low_sp and how should it be handled?
     if Config.ade_hmethod_sp_basis != '':
         gen_script.append(f"ade.Config.{Config.ade_hmethod}.keywords."
                           f"sp.basis_set = '{Config.ade_hmethod_sp_basis}'\n")
