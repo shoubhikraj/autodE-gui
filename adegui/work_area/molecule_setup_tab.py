@@ -128,11 +128,12 @@ class MoleculeDrawOrType(QWidget):
             # if there is no SMILES or illegal SMILES, it will go to default CH4
             if mol is None:
                 self.smi_textbox.setText('')  # empty textbox
-                mol = smiles_to_3d_rdkmol('C')
+                mol = smiles_to_3d_rdkmol('C')  # use CH4 as starting point
             rdkit.Chem.MolToMolFile(mol, str(scrdir/self.mol_fname))
         # use editor to edit the molfile
         subprocess.run([Config.adegui_moleditor, str(scrdir/self.mol_fname)])
         mol = rdkit.Chem.MolFromMolFile(str(scrdir/self.mol_fname), sanitize=False, removeHs=False)
+        # TODO guard this mol against empty molfile or deleted molfile
         # try to display it as sanitized SMILES
         mol_copy = rdkit.Chem.Mol(mol)  # get a copy
         istat = rdkit.Chem.SanitizeMol(mol_copy, catchErrors=True)
