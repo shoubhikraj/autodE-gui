@@ -3,7 +3,7 @@ import subprocess
 from typing import List
 
 import rdkit.Chem
-from PyQt5.QtCore import pyqtSlot
+from PyQt5.QtCore import pyqtSlot, QProcess
 from PyQt5.QtWidgets import (QWidget, QHBoxLayout, QGroupBox,
                              QVBoxLayout, QLineEdit, QPushButton,
                              QLabel, QMessageBox, QSpinBox,
@@ -67,17 +67,18 @@ class MoleculeDrawOrType(QWidget):
         self.mol_index = index
         self.mol_fname = 'molecule-'+str(rct_or_prod)+str(index)+'.mol'
         self.xyz_fname = self.mol_fname[:-4] + '.xyz'
+        self.editor_proc = None  # molecular editor process
 
         self.smi_textbox = QLineEdit()
         self.smi_textbox.textEdited.connect(self.molecule_written)
-        draw_btn = QPushButton("Draw")
-        draw_btn.setIcon(qApp.style().standardIcon(QStyle.SP_DialogResetButton))
-        draw_btn.clicked.connect(self.molecule_drawn)
+        self.draw_btn = QPushButton("Draw")
+        self.draw_btn.setIcon(qApp.style().standardIcon(QStyle.SP_DialogResetButton))
+        self.draw_btn.clicked.connect(self.molecule_draw_start)
 
         upper_bar_layout = QHBoxLayout()
         upper_bar_layout.addWidget(QLabel("SMILES:"), stretch=0)
         upper_bar_layout.addWidget(self.smi_textbox, stretch=2)
-        upper_bar_layout.addWidget(draw_btn, stretch=1)
+        upper_bar_layout.addWidget(self.draw_btn, stretch=1)
         upper_bar = QWidget()
         upper_bar.setLayout(upper_bar_layout)
 
@@ -114,8 +115,8 @@ class MoleculeDrawOrType(QWidget):
         return None
 
     @pyqtSlot()
-    def molecule_drawn(self):
-        """ Triggered when molecule is drawn """
+    def molecule_draw_start(self):
+        """ Triggered when molecule draw button is pressed """
         # if there is no editor then warn
         if Config.adegui_moleditor is None:
             QMessageBox.warning(self,
@@ -130,10 +131,30 @@ class MoleculeDrawOrType(QWidget):
                 self.smi_textbox.setText('')  # empty textbox
                 mol = smiles_to_3d_rdkmol('C')  # use CH4 as starting point
             rdkit.Chem.MolToMolFile(mol, str(scrdir/self.mol_fname))
-        # use editor to edit the molfile
-        subprocess.run([Config.adegui_moleditor, str(scrdir/self.mol_fname)])
-        mol = rdkit.Chem.MolFromMolFile(str(scrdir/self.mol_fname), sanitize=False, removeHs=False)
-        # TODO guard this mol against empty molfile or deleted molfile
+
+        if self.editor_proc is None:  # protect against multiple launch
+            self.draw_btn.setEnabled(False)  # disable button
+            self.draw_btn.setToolTip("Avogadro is still running!")  # explain why it is disabled
+            self.editor_proc = QProcess()  # async process
+            self.editor_proc.finished.connect(self.molecule_draw_finished)  # when finished
+            # use editor to edit the molfile
+            self.editor_proc.start(Config.adegui_moleditor, [str(scrdir/self.mol_fname)])
+
+    @pyqtSlot()
+    def molecule_draw_finished(self):
+        """ Triggered when molecule editor exits, i.e. drawing is finished """
+        self.draw_btn.setEnabled(True)  # enable button again
+        self.draw_btn.setToolTip('')  # clear tooltip
+        self.editor_proc = None
+        # now handle the molfile
+        if os.path.isfile(scrdir/self.mol_fname):
+            mol = rdkit.Chem.MolFromMolFile(str(scrdir/self.mol_fname), sanitize=False, removeHs=False)
+        else:
+            mol = None
+        # if molfile is deleted or corrupted somehow
+        if mol is None:
+            QMessageBox.warning(self, "autodE-GUI", "Molfile unavailable or corrupted!")
+            return None
         # try to display it as sanitized SMILES
         mol_copy = rdkit.Chem.Mol(mol)  # get a copy
         istat = rdkit.Chem.SanitizeMol(mol_copy, catchErrors=True)
