@@ -1,4 +1,5 @@
-from PyQt5.QtWidgets import QMainWindow, QVBoxLayout, QWidget
+from PyQt5.QtWidgets import (QMainWindow, QVBoxLayout, QWidget,
+                             qApp, QStyle)
 from PyQt5.QtCore import pyqtSlot
 from adegui.work_area.work_area import WorkAreaTabs
 from adegui.main_buttons import MainButtons
@@ -19,8 +20,9 @@ class MainWindow(QMainWindow):
         main_layout.addWidget(self.work_area_tabs)  # first part of vertical layout <= main work area
         main_layout.addWidget(self.main_btns)  # second part of vertical layout <= buttons
         self.main_btns.btn2.clicked.connect(self.prev_tab)
-        self.main_btns.next_btn.clicked.connect(self.next_tab)
-        self.main_btns.generate_btn.clicked.connect(self.generate_script)
+        self.main_btns.btn3.clicked.connect(self.next_tab)
+        self.work_area_tabs.currentChanged.connect(self.tab_changed)
+        self._third_btn_at_gen = False  # to reduce unnecessary ui changes
 
         # QMainWindow already has a fixed layout, so create a widget then
         # apply layout on it, and set it as the central widget
@@ -29,20 +31,36 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(main_widget)
 
     @pyqtSlot()
+    def tab_changed(self):
+        # when last tab is on, change next button to generate button
+        current_tab_idx = self.work_area_tabs.currentIndex()
+        if current_tab_idx == (self.work_area_tabs.count()-1):  # if on last tab
+            self.main_btns.btn3.clicked.disconnect()  # remove all triggers
+            self.main_btns.btn3.clicked.connect(self.generate_script)  # generate script now
+            self.main_btns.btn3.setText("Generate")
+            self.main_btns.btn3.setIcon(qApp.style().standardIcon(QStyle.SP_DialogSaveButton))
+            self._third_btn_at_gen = True
+        else:  # not on last tab
+            if not self._third_btn_at_gen:  # if button not changed, do nothing
+                return None
+            # otherwise restore original button
+            self.main_btns.btn3.clicked.disconnect()
+            self.main_btns.btn3.clicked.connect(self.next_tab)
+            self.main_btns.btn3.setText("Next")
+            self.main_btns.btn3.setIcon(qApp.style().standardIcon(QStyle.SP_ArrowRight))
+            self._third_btn_at_gen = False
+
+    @pyqtSlot()
     def next_tab(self):
         current_tab_idx = self.work_area_tabs.currentIndex()
         if current_tab_idx < (self.work_area_tabs.count()-1):
             self.work_area_tabs.setCurrentIndex(current_tab_idx+1)  # go to next tab
-        if (self.work_area_tabs.count()-1) == (current_tab_idx+1):  # if at last tab
-            self.main_btns.btn3.setCurrentIndex(1)  # show generate button
 
     @pyqtSlot()
     def prev_tab(self):
         current_tab_idx = self.work_area_tabs.currentIndex()
         if current_tab_idx > 0:
             self.work_area_tabs.setCurrentIndex(current_tab_idx-1)  # go to previous tab
-        if current_tab_idx <= (self.work_area_tabs.count()-1):  # if not at last tab
-            self.main_btns.btn3.setCurrentIndex(0)
 
     @pyqtSlot()
     def generate_script(self):

@@ -12,20 +12,13 @@ class MainButtons(QWidget):
         btn1 = QPushButton("Run")
         btn1.setEnabled(False)  # implement run function later
         self.btn2 = QPushButton("Back")
-
-        self.btn3 = QStackedWidget()  # button 3 has to change at the last tab
-        self.next_btn = QPushButton("Next")
-        self.generate_btn = QPushButton("Generate")
-        self.btn3.addWidget(self.next_btn)
-        self.btn3.addWidget(self.generate_btn)
-
+        self.btn3 = QPushButton("Next")
         btn4 = QPushButton("Exit")
 
         # add icons to buttons
         btn1.setIcon(qApp.style().standardIcon(QStyle.SP_MediaPlay))
         self.btn2.setIcon(qApp.style().standardIcon(QStyle.SP_ArrowLeft))
-        self.next_btn.setIcon(qApp.style().standardIcon(QStyle.SP_ArrowRight))
-        self.generate_btn.setIcon(qApp.style().standardIcon(QStyle.SP_DialogSaveButton))
+        self.btn3.setIcon(qApp.style().standardIcon(QStyle.SP_ArrowRight))
         btn4.setIcon(qApp.style().standardIcon(QStyle.SP_BrowserStop))
 
         # connect close to trigger function
