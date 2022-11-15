@@ -1,5 +1,6 @@
 # defines the buttons in the main window
-from PyQt5.QtWidgets import QHBoxLayout, QPushButton, QWidget, qApp
+from PyQt5.QtWidgets import (QHBoxLayout, QPushButton, QWidget,
+                             qApp, QStyle)
 from PyQt5.QtCore import pyqtSlot
 from adegui.generate_script import write_ade_script_from_config
 
@@ -11,8 +12,13 @@ class MainButtons(QWidget):
         # create the buttons
         btn1 = QPushButton("Run")
         btn1.setEnabled(False)  # implement run function later
-        btn2 = QPushButton("Generate")
+        btn2 = QPushButton("Generate")  # TODO put back and next buttons
         btn3 = QPushButton("Exit")
+
+        # add icons to buttons
+        btn1.setIcon(qApp.style().standardIcon(QStyle.SP_MediaPlay))
+        btn2.setIcon(qApp.style().standardIcon(QStyle.SP_DialogSaveButton))
+        btn3.setIcon(qApp.style().standardIcon(QStyle.SP_BrowserStop))
 
         # connect buttons to trigger functions
         btn2.clicked.connect(self.generate_script)
