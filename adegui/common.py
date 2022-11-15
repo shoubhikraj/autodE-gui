@@ -1,9 +1,13 @@
-# This file contains common functions, constants etc. which area used
+# This file contains common functions, constants etc. which are used
 # in the main code
+import shutil
+
 import importlib.resources
-from typing import Type, Optional
+import pathlib, os
+from typing import Type, Optional, Union
 from rdkit import Chem
 from rdkit.Chem import AllChem
+from PyQt5.QtWidgets import QMessageBox
 
 
 def smiles_to_3d_rdkmol(smi: str) -> Optional[Type[Chem.rdchem.Mol]]:
@@ -40,4 +44,28 @@ def _read_priv_rsrc_txt(fname: str) -> str:
     with importlib.resources.path('adegui.resources', str(fname)) as fh:
         text = fh.read_text()
     return text
+
+
+def _safe_copy_file(source: pathlib.Path, dest: pathlib.Path, obj) -> int:
+    """
+    Copy a file from source to destination with multiple checks for
+    extra safety
+
+    :param source: The source file (pathlib Path)
+    :param dest: The destination file (pathlib Path)
+    :param obj: The parent QWidget instance
+    :return: 0 if successfull, -1 if unsuccessful
+    """
+    if not os.path.isfile(source):
+        QMessageBox.critical(obj,
+                             "autodE-GUI",
+                             f"Error, file {source.name} has been deleted or file system "
+                             "permission error! Unable to write file.")
+        return -1
+    else:
+        try:
+            shutil.copyfile(source, dest)
+        except shutil.SameFileError:  # if same file, no need to copy
+            return 0
+        return 0
 

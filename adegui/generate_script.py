@@ -2,6 +2,7 @@ import pathlib, os, shutil
 
 from PyQt5.QtWidgets import QMessageBox, QFileDialog
 from adegui import Config
+from adegui.common import _safe_copy_file
 
 
 def write_ade_script_from_config(obj) -> None:
@@ -69,13 +70,8 @@ def write_ade_script_from_config(obj) -> None:
             if isinstance(rct_molecule.molecule, pathlib.Path):
                 xyz_fname = rct_molecule.molecule.name
                 gen_script.append(f"rct{index} = ade.Reactant('{xyz_fname}', ")
-                if not os.path.isfile(rct_molecule.molecule): # if file does not exist
-                    QMessageBox.critical(obj,
-                                         "autodE-GUI",
-                                         f"Error, {xyz_fname} file deleted or file system permission error!"
-                                         "Unable to generate script.")
+                if _safe_copy_file(rct_molecule.molecule, cwd_path/xyz_fname, obj) != 0:
                     return None
-                shutil.copyfile(rct_molecule.molecule, cwd_path/xyz_fname)
             elif isinstance(rct_molecule.molecule, str):
                 gen_script.append(f"rct{index} = ade.Reactant(smiles='{rct_molecule.molecule}', ")
             gen_script.append(f"charge={rct_molecule.charge}, "
@@ -87,15 +83,8 @@ def write_ade_script_from_config(obj) -> None:
             if isinstance(prod_molecule.molecule, pathlib.Path):
                 xyz_fname = prod_molecule.molecule.name
                 gen_script.append(f"prod{index} = ade.Product('{xyz_fname}', ")
-                if not os.path.isfile(prod_molecule.molecule):
-                    QMessageBox.critical(obj,
-                                         "autodE-GUI",
-                                         f"Error, {xyz_fname} file deleted or file system permission error!"
-                                         "Unable to generate script.")
+                if _safe_copy_file(prod_molecule.molecule, cwd_path/xyz_fname, obj) != 0:
                     return None
-                shutil.copyfile(prod_molecule.molecule, cwd_path/xyz_fname)
-                # TODO add a check if save folder is the same (shutil crashes?)
-                # TODO refactor this part into a copy with check function
             elif isinstance(prod_molecule.molecule, str):
                 gen_script.append(f"prod{index} = ade.Product(smiles='{prod_molecule.molecule}', ")
             gen_script.append(f"charge={prod_molecule.charge}, "

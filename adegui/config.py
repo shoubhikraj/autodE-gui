@@ -58,11 +58,6 @@ class _AdeGuiConfig:
         self.ade_hmethod_sp_func: str = ''  # functional for single points
         self.ade_hmethod_geom_func: str = ''  # functional for geometry optimisation
 
-        self.ade_avail_basis: List[str] = ["default", "def2-SVP", "def2-TZVP", "def2-QZVP"
-                                           "ma-def2-SVP", "ma-def2-TZVP"]
-        self.ade_avail_functionals: List[str] = ["default", "PBE0", "B3LYP", "X3LYP",
-                                                 "M06-2X"] # TODO M06-2X should be M062X
-
         #atexit.register(self._cleanup)  # TODO activate this once debugging done
 
     def _cleanup(self):
