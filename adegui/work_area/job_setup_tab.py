@@ -24,7 +24,7 @@ class JobSetupTab(QWidget):
 
     def __init__(self):
         super().__init__()
-        # setup the drop down menu
+        # setup the drop-down menu
         self.drop_menu = QComboBox()
         for item in gui_avail_job_typs:
             self.drop_menu.addItem(item)
