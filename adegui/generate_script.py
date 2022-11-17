@@ -3,6 +3,7 @@ import pathlib, os, shutil
 from PyQt5.QtWidgets import QMessageBox, QFileDialog
 from adegui import Config
 from adegui.common import _safe_copy_file
+from adegui.work_area.job_setup_tab import gui_avail_job_typs
 
 
 def write_ade_script_from_config(obj) -> None:
@@ -93,6 +94,9 @@ def write_ade_script_from_config(obj) -> None:
     gen_script.append("\n")
 
     # calculation setup
+    if Config.ade_job_typ not in gui_avail_job_typs:
+        raise Exception("Job type is not available!")
+
 
     # Reaction profile =>
     if Config.ade_job_typ == 'Reaction Profile':
@@ -101,7 +105,7 @@ def write_ade_script_from_config(obj) -> None:
     # <=
 
     # Transition state (adaptive) =>
-    if Config.ade_job_typ == "Transition State: adaptive":
+    if Config.ade_job_typ == "Transition State":
         gen_script.append(f"rxn = ade.Reaction({rct_and_prod})\n")
         gen_script.append(f"rxn.locate_transition_state()\n")
         gen_script.append("rxn.ts.print_xyz_file(filename='ts.xyz')\n")

@@ -10,8 +10,8 @@ from adegui.common import _read_priv_rsrc_txt
 
 gui_avail_job_typs: List[str] = [
     "Reaction Profile",
-    "Transition State: adaptive",
-    "Transition State: CI-NEB",
+    "Transition State",
+    "Reaction path: CI-NEB",
     "Reaction path: NEB"
 ]  # we need the list here to make the order right
 
@@ -67,7 +67,8 @@ class OptInfoBox(QStackedWidget):
         rct_profile_box.setPlainText(_read_priv_rsrc_txt('reaction_profile_info.txt'))
         rct_profile_box.setReadOnly(True)
         self.addWidget(rct_profile_box)
-        ts_adapt_box = QPlainTextEdit()
-        ts_adapt_box.setPlainText(_read_priv_rsrc_txt('ts_adaptive_info.txt'))
-        ts_adapt_box.setReadOnly(True)
-        self.addWidget(ts_adapt_box)
+        # TODO fix this part
+        ts_box = QPlainTextEdit()
+        #ts_box.setPlainText(_read_priv_rsrc_txt('ts_info.txt'))
+        ts_box.setReadOnly(True)
+        self.addWidget(ts_box)
