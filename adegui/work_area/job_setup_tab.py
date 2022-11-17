@@ -69,6 +69,6 @@ class OptInfoBox(QStackedWidget):
         self.addWidget(rct_profile_box)
         # TODO fix this part
         ts_box = QPlainTextEdit()
-        #ts_box.setPlainText(_read_priv_rsrc_txt('ts_info.txt'))
+        ts_box.setPlainText(_read_priv_rsrc_txt('ts_info.txt'))
         ts_box.setReadOnly(True)
         self.addWidget(ts_box)
