@@ -70,6 +70,7 @@ class MoleculeDrawOrType(QWidget):
         self.editor_proc = None  # molecular editor process
 
         self.smi_textbox = QLineEdit()
+        self.smi_textbox.setPlaceholderText("Type SMILES or draw")
         self.smi_textbox.textEdited.connect(self.molecule_written)
         self.draw_btn = QPushButton("Draw")
         self.draw_btn.setIcon(qApp.style().standardIcon(QStyle.SP_DialogResetButton))

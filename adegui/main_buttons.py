@@ -3,7 +3,6 @@ from PyQt5.QtWidgets import (QHBoxLayout, QPushButton, QWidget,
                              qApp, QStyle, QStackedWidget)
 
 
-
 class MainButtons(QWidget):
     def __init__(self):
         super().__init__()
