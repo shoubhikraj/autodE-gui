@@ -72,3 +72,12 @@ class OptInfoBox(QStackedWidget):
         ts_box.setPlainText(_read_priv_rsrc_txt('ts_info.txt'))
         ts_box.setReadOnly(True)
         self.addWidget(ts_box)
+        ci_neb_box = QPlainTextEdit()
+        ci_neb_box.setPlainText(_read_priv_rsrc_txt('ci_neb_info.txt'))
+        ci_neb_box.setReadOnly(True)
+        self.addWidget(ci_neb_box)
+        neb_box = QPlainTextEdit()
+        neb_box.setPlainText(_read_priv_rsrc_txt('neb_info.txt'))
+        neb_box.setReadOnly(True)
+        self.addWidget(neb_box)
+

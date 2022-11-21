@@ -1,0 +1,1 @@
+ALERT!!! CI-NEB calculation. GUI not implemented, please do not use!!!!!
