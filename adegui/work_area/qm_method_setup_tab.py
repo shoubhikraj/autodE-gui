@@ -95,7 +95,7 @@ class QMModifyWidget(QGroupBox):
         self.basis_menu = QComboBox()
         for basis_set in avail_basis_sets:
             self.basis_menu.addItem(basis_set)
-        self.basis_menu.currentIndexChanged.connect(self.basis_changed)
+        self.basis_menu.currentTextChanged.connect(self.basis_changed)
         self.basis_menu.setEditable(True)
         basis_layout = QHBoxLayout()
         basis_layout.addWidget(QLabel('Basis Set:'))
@@ -106,7 +106,7 @@ class QMModifyWidget(QGroupBox):
         self.func_menu = QComboBox()
         for functional in avail_functionals:
             self.func_menu.addItem(functional)
-        self.func_menu.currentIndexChanged.connect(self.func_changed)
+        self.func_menu.currentTextChanged.connect(self.func_changed)
         self.func_menu.setEditable(True)
         func_layout = QHBoxLayout()
         func_layout.addWidget(QLabel('Functional:'))

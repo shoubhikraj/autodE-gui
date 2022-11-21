@@ -52,9 +52,13 @@ def write_ade_script_from_config(obj) -> None:
     if Config.ade_hmethod_sp_basis != '':
         gen_script.append(f"ade.Config.{Config.ade_hmethod}.keywords."
                           f"sp.basis_set = '{Config.ade_hmethod_sp_basis}'\n")
+        gen_script.append(f"ade.Config.{Config.ade_hmethod}.keywords."
+                          f"low_sp.basis_set = '{Config.ade_hmethod_sp_basis}'\n")
     if Config.ade_hmethod_sp_func != '':
         gen_script.append(f"ade.Config.{Config.ade_hmethod}.keywords."
                           f"sp.functional = '{Config.ade_hmethod_sp_func}'\n")
+        gen_script.append(f"ade.Config.{Config.ade_hmethod}.keywords."
+                          f"low_sp.basis_set = '{Config.ade_hmethod_sp_basis}'\n")
     if Config.ade_hmethod_geom_basis != '':
         gen_script.append(f"ade.Config.{Config.ade_hmethod}.keywords."
                           f"set_opt_basis('{Config.ade_hmethod_geom_basis}')\n")
