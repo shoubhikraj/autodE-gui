@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import (QTabWidget)
 from adegui.work_area.job_setup_tab import JobSetupTab
 from adegui.work_area.molecule_setup_tab import MoleculeSelectTab
 from adegui.work_area.qm_method_setup_tab import QMMethodSetupTab
+from adegui.work_area.system_setup_tab import SystemSetupTab
 
 
 class WorkAreaTabs(QTabWidget):
@@ -13,3 +14,4 @@ class WorkAreaTabs(QTabWidget):
         self.addTab(MoleculeSelectTab(), "Molecule details")
         self.addTab(JobSetupTab(), "Job Setup")
         self.addTab(QMMethodSetupTab(), "QM Method")
+        self.addTab(SystemSetupTab(), "System Setup")

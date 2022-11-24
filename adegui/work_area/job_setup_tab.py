@@ -1,10 +1,8 @@
 from typing import List
-
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import (QWidget, QComboBox, QGroupBox,
                              QHBoxLayout, QVBoxLayout, QStackedWidget,
                              QPlainTextEdit)
-
 from adegui import Config
 from adegui.common import _read_priv_rsrc_txt
 
