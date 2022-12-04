@@ -42,7 +42,8 @@ class _AdeGuiConfig:
                 self.adegui_moleditor = shutil.which(editor)
                 break
 
-        self.ade_n_cores: int = 8  # Number of cores in autodE
+        self.ade_n_cores: int = 4  # Number of cores in autodE
+        self.ade_max_core_mem: float = 4096  # Maximum memory per core
         self.ade_job_name: str = ''
 
         # initialize reactants and products

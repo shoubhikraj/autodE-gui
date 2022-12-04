@@ -41,6 +41,7 @@ def write_ade_script_from_config(obj) -> None:
     # first import and set the autodE config variables
     gen_script.append("import autode as ade\n\n")
     gen_script.append(f"ade.Config.n_cores = {Config.ade_n_cores}\n")
+    gen_script.append(f"ade.Config.max_core = {Config.ade_max_core_mem:.2f}\n")
     gen_script.append("\n")  # line breaks to make it look better
 
     # setup the lmethod and hmethod
@@ -100,7 +101,6 @@ def write_ade_script_from_config(obj) -> None:
     # calculation setup
     if Config.ade_job_typ not in gui_avail_job_typs:
         raise Exception("Job type is not available!")
-
 
     # Reaction profile =>
     if Config.ade_job_typ == 'Reaction Profile':
