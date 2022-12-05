@@ -1,5 +1,4 @@
-import pathlib, os, shutil
-
+import pathlib
 from PyQt5.QtWidgets import QMessageBox, QFileDialog
 from adegui import Config
 from adegui.common import _safe_copy_file
