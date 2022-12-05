@@ -5,9 +5,9 @@ from PyQt5.QtWidgets import (QWidget, QSpinBox, QHBoxLayout,
 from adegui import Config
 
 
-class SystemSetupTab(QGroupBox):
+class SystemSetupTab(QWidget):
     def __init__(self):
-        super().__init__("System Settings")
+        super().__init__()
 
         self.n_cores_dial = QSpinBox()
         self.n_cores_dial.setRange(1, 200)
@@ -44,7 +44,12 @@ class SystemSetupTab(QGroupBox):
         large_layout.addWidget(upper_bar)
         large_layout.addWidget(lower_bar)
         large_layout.addStretch()
-        self.setLayout(large_layout)
+        large_widget = QGroupBox("System Settings")
+        large_widget.setLayout(large_layout)
+
+        main_layout = QHBoxLayout()  # use a dummy layout
+        main_layout.addWidget(large_widget)
+        self.setLayout(main_layout)
 
     @pyqtSlot()
     def max_core_mem_changed(self):
