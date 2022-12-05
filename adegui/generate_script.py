@@ -45,8 +45,10 @@ def write_ade_script_from_config(obj) -> None:
     gen_script.append("\n")  # line breaks to make it look better
 
     # setup the lmethod and hmethod
-    gen_script.append(f"ade.Config.lcode = '{Config.ade_lmethod}'\n")
-    gen_script.append(f"ade.Config.hcode = '{Config.ade_hmethod}'\n")
+    if Config.ade_lmethod != '':
+        gen_script.append(f"ade.Config.lcode = '{Config.ade_lmethod}'\n")
+    if Config.ade_hmethod != '':
+        gen_script.append(f"ade.Config.hcode = '{Config.ade_hmethod}'\n")
 
     # options for hmethod (basis and functional)
     # TODO what is low_sp and how should it be handled?
@@ -114,6 +116,9 @@ def write_ade_script_from_config(obj) -> None:
         gen_script.append(f"rxn.locate_transition_state()\n")
         gen_script.append("rxn.ts.print_xyz_file(filename='ts.xyz')\n")
     # <=
+
+    # finally add a trailing newline
+    gen_script.append("\n")
 
     # (over)write script
     try:

@@ -5,8 +5,8 @@ from PyQt5.QtCore import pyqtSlot
 from adegui import Config
 
 
-avail_lmethods = ['XTB', 'MOPAC']
-avail_hmethods = ['ORCA', 'Gaussian09', 'Gaussian16', 'NWChem', 'QChem']
+avail_lmethods = ['(auto)', 'XTB', 'MOPAC']
+avail_hmethods = ['(auto)', 'ORCA', 'Gaussian09', 'Gaussian16', 'NWChem', 'QChem']
 
 class QMMethodSetupTab(QWidget):
     """
@@ -21,7 +21,6 @@ class QMMethodSetupTab(QWidget):
         self.lmethod_drop_menu = QComboBox()
         for item in avail_lmethods:
             self.lmethod_drop_menu.addItem(item)
-        Config.ade_lmethod = self.lmethod_drop_menu.currentText()  # initialize lmethod
         self.lmethod_drop_menu.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Preferred)  # no horizontal stretch
         self.lmethod_drop_menu.currentIndexChanged.connect(self.lmethod_changed)  # signal connect
 
@@ -34,14 +33,13 @@ class QMMethodSetupTab(QWidget):
         self.hmethod_drop_menu = QComboBox()
         for item in avail_hmethods:
             self.hmethod_drop_menu.addItem(item)
-        Config.ade_hmethod = self.hmethod_drop_menu.currentText()  # initialize hmethod
         self.hmethod_drop_menu.setSizePolicy(QSizePolicy.Maximum, QSizePolicy.Preferred)
         self.hmethod_drop_menu.currentIndexChanged.connect(self.hmethod_changed)
 
         qm_hmethod_mod_widget = QWidget()  # modify hmethod (basis and functionals)
         qm_mod_layout = QHBoxLayout()
-        qm_mod_layout.addWidget(QMModifyWidget('Single-point', 'sp'))
-        qm_mod_layout.addWidget(QMModifyWidget('Geometries (gradient+hessian)', 'geom'))
+        qm_mod_layout.addWidget(HighQMModifyWidget('Single-point', 'sp'))
+        qm_mod_layout.addWidget(HighQMModifyWidget('Geometries (gradient+hessian)', 'geom'))
         qm_hmethod_mod_widget.setLayout(qm_mod_layout)
 
         hmethod_layout = QVBoxLayout()
@@ -57,12 +55,18 @@ class QMMethodSetupTab(QWidget):
 
     @pyqtSlot()
     def lmethod_changed(self):
-        Config.ade_lmethod = self.lmethod_drop_menu.currentText()
+        current_lmethod = self.lmethod_drop_menu.currentText()
+        if current_lmethod == '(auto)':
+            Config.ade_lmethod = ''
+        else:
+            Config.ade_lmethod = current_lmethod
 
     @pyqtSlot()
     def hmethod_changed(self):
         current_hmethod = self.hmethod_drop_menu.currentText()
-        if current_hmethod == 'Gaussian09': # fix the names of Gaussian
+        if current_hmethod == '(auto)':
+            Config.ade_hmethod = ''
+        elif current_hmethod == 'Gaussian09': # fix the names of Gaussian
             Config.ade_hmethod = 'G09'
         elif current_hmethod == 'Gaussian16':
             Config.ade_hmethod = 'G16'
@@ -77,10 +81,10 @@ avail_functionals = ['(default)', 'B3LYP', 'M06-2X', 'X3LYP',
                      'PBE0', 'TPSS']
 
 
-class QMModifyWidget(QGroupBox):
+class HighQMModifyWidget(QGroupBox):
     """
-    This widget modifies the basis set and the functional for the current QM Method,
-    either for the single point calculations or geometry calculations
+    This widget modifies the basis set and the functional for the current hmethod
+    QM Method, either for the single point calculations or geometry calculations
     """
     def __init__(self, name: str, sp_or_geom: str):
         """
