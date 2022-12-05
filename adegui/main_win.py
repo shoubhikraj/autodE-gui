@@ -36,7 +36,7 @@ class MainWindow(QMainWindow):
         current_tab_idx = self.work_area_tabs.currentIndex()
         if current_tab_idx == (self.work_area_tabs.count()-1):  # if on last tab
             self.main_btns.btn3.clicked.disconnect()  # remove all triggers
-            self.main_btns.btn3.clicked.connect(self.generate_script)  # generate script now
+            self.main_btns.btn3.clicked.connect(self.generate_script)  # can write script now
             self.main_btns.btn3.setText("Generate")
             self.main_btns.btn3.setIcon(qApp.style().standardIcon(QStyle.SP_DialogSaveButton))
             self._third_btn_at_gen = True
