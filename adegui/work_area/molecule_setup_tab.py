@@ -48,7 +48,7 @@ class MoleculeSelectTab(QWidget):
         self.setLayout(large_layout)
 
 
-class MoleculeDrawOrType(QWidget):
+class MoleculeDrawOrType(QFrame):
     """
     Each widget for typing or drawing molecule (drawn molecules are converted to SMILES)
     Initialize by passing a list of SMILES strings, and integer denoting position of the
@@ -102,9 +102,9 @@ class MoleculeDrawOrType(QWidget):
         large_layout = QVBoxLayout()
         large_layout.addWidget(upper_bar)
         large_layout.addWidget(lower_bar)
-        large_layout.addWidget(QHLine())
         large_layout.setContentsMargins(0, 0, 0, 0)  # remove padding
 
+        self.setFrameStyle(QFrame.StyledPanel | QFrame.Plain)
         self.setLayout(large_layout)
 
     @pyqtSlot()
