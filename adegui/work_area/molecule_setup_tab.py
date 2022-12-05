@@ -184,13 +184,3 @@ class MoleculeDrawOrType(QFrame):
         else:
             self.mult_dial.setValue(1)
 
-
-class QHLine(QFrame):
-    """
-    Adds a horizontal line (PyQt)
-    """
-    def __init__(self):
-        super().__init__()
-        self.setFrameShape(QFrame.HLine)
-        self.setFrameShadow(QFrame.Sunken)
-
