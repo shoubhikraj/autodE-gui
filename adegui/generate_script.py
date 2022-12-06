@@ -14,12 +14,12 @@ def write_ade_script_from_config(obj) -> None:
     """
 
     # stop if there are no reactants or products
-    if (Config.ade_rct_mols[0].molecule, Config.ade_rct_mols[1].molecule) == ('', ''):
+    if all(molecule.is_empty() for molecule in Config.ade_rct_mols):
         QMessageBox.warning(obj,
                             "autodE-GUI",
                             "There are no reactants! Unable to write script.")
         return None
-    if (Config.ade_prod_mols[0].molecule, Config.ade_prod_mols[1].molecule) == ('', ''):
+    if all(molecule.is_empty() for molecule in Config.ade_prod_mols):
         QMessageBox.warning(obj,
                             "autodE-GUI",
                             "There are no products! Unable to write script.")

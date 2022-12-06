@@ -24,6 +24,12 @@ class AdeGuiMolecule:
         self.charge = charge
         self.mult = mult
 
+    def is_empty(self) -> bool:
+        if self.molecule == '':
+            return True
+        else:
+            return False
+
 
 class _AdeGuiConfig:
     """
@@ -47,8 +53,8 @@ class _AdeGuiConfig:
         self.ade_job_name: str = ''
 
         # initialize reactants and products
-        self.ade_rct_mols: List[AdeGuiMolecule] = [AdeGuiMolecule(''), AdeGuiMolecule('')]  # Reactant(s)
-        self.ade_prod_mols: List[AdeGuiMolecule] = [AdeGuiMolecule(''), AdeGuiMolecule('')]  # Product(s)
+        self.ade_rct_mols: List[AdeGuiMolecule] = [AdeGuiMolecule('')]  # Reactant(s)
+        self.ade_prod_mols: List[AdeGuiMolecule] = [AdeGuiMolecule('')]  # Product(s)
 
         self.ade_job_typ: str = ''  # Job Type
 

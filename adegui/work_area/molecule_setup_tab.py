@@ -1,5 +1,4 @@
 import os
-import subprocess
 from typing import List
 
 import rdkit.Chem
@@ -28,24 +27,52 @@ class MoleculeSelectTab(QWidget):
 
         # SMILES input or draw reactants
         rct_input = QGroupBox("Reactant(s)")
+        rct_add_btn = QPushButton("+ Add reactant")
+        rct_add_btn.clicked.connect(self.add_reactant_field)
+        rct_lower_bar = QHBoxLayout()
+        rct_lower_bar.addWidget(rct_add_btn)
+        rct_lower_bar.addStretch()
+
+        self.rct_dynamic_area = QVBoxLayout()
+        self.rct_widgets = []  # holds references to widgets
+        self.rct_max_len = 0
+
         rct_layout = QVBoxLayout()
-        rct_layout.addWidget(MoleculeDrawOrType(Config.ade_rct_mols, 0, 'rct'))
-        rct_layout.addWidget(MoleculeDrawOrType(Config.ade_rct_mols, 1, 'rct'))
+        rct_layout.addLayout(self.rct_dynamic_area)
+        rct_layout.addLayout(rct_lower_bar)
         rct_layout.addStretch()  # to prevent unnecessary whitespace between widgets
         # two reactants right now can add more later
         rct_input.setLayout(rct_layout)
 
         # SMILES input or draw products
         prod_input = QGroupBox("Product(s)")
+        prod_add_btn = QPushButton("+ Add product")
+        prod_add_btn.clicked.connect(self.add_product_field)
+        prod_lower_bar = QHBoxLayout()
+        prod_lower_bar.addWidget(prod_add_btn)
+        prod_lower_bar.addStretch()
+
         prod_layout = QVBoxLayout()
         prod_layout.addWidget(MoleculeDrawOrType(Config.ade_prod_mols, 0, 'prod'))
-        prod_layout.addWidget(MoleculeDrawOrType(Config.ade_prod_mols, 1, 'prod'))
+        prod_layout.addLayout(prod_lower_bar)
         prod_layout.addStretch()
         prod_input.setLayout(prod_layout)
 
         large_layout.addWidget(rct_input)
         large_layout.addWidget(prod_input)
         self.setLayout(large_layout)
+
+    @pyqtSlot()
+    def add_reactant_field(self):
+        Config.ade_rct_mols.append(AdeGuiMolecule(''))
+        rct_widget = MoleculeDrawOrType(Config.ade_rct_mols, self.rct_max_len, 'rct')
+        self.rct_widgets.append(rct_widget)
+        self.rct_dynamic_area.addWidget(rct_widget)
+        self.rct_max_len += 1
+
+    @pyqtSlot()
+    def add_product_field(self):
+        pass
 
 
 class MoleculeDrawOrType(QFrame):
