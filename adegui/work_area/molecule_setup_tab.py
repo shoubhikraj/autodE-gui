@@ -28,17 +28,17 @@ class MoleculeSelectTab(QWidget):
 
         # SMILES input or draw reactants
         rct_input = QGroupBox("Reactant(s)")
-        rct_add_btn = QPushButton("+ Add reactant")
-        rct_rm_btn = QPushButton("- Remove reactant")
-        rct_add_btn.clicked.connect(self.add_reactant_field)
-        rct_rm_btn.clicked.connect(self.remove_reactant_field)
+        self.rct_add_btn = QPushButton("+ Add reactant")
+        self.rct_rm_btn = QPushButton("- Remove reactant")
+        self.rct_add_btn.clicked.connect(self.add_reactant_field)
+        self.rct_rm_btn.clicked.connect(self.remove_reactant_field)
         rct_lower_bar = QHBoxLayout()
-        rct_lower_bar.addWidget(rct_add_btn)
-        rct_lower_bar.addWidget(rct_rm_btn)
+        rct_lower_bar.addWidget(self.rct_add_btn)
+        rct_lower_bar.addWidget(self.rct_rm_btn)
         rct_lower_bar.addStretch()
 
         self.rct_dynamic_area = QVBoxLayout()
-        self.rct_widgets: List[QWidget] = []  # holds references to widgets
+        self.rct_widgets: List[MoleculeDrawOrType] = []  # holds references to widgets
         self.rct_max_len = 0
 
         rct_layout = QVBoxLayout()
@@ -51,14 +51,22 @@ class MoleculeSelectTab(QWidget):
 
         # SMILES input or draw products
         prod_input = QGroupBox("Product(s)")
-        prod_add_btn = QPushButton("+ Add product")
-        prod_add_btn.clicked.connect(self.add_product_field)
+        self.prod_add_btn = QPushButton("+ Add product")
+        self.prod_rm_btn = QPushButton("- Remove product")
+        self.prod_add_btn.clicked.connect(self.add_product_field)
+        self.prod_rm_btn.clicked.connect(self.remove_product_field)
         prod_lower_bar = QHBoxLayout()
-        prod_lower_bar.addWidget(prod_add_btn)
+        prod_lower_bar.addWidget(self.prod_add_btn)
+        prod_lower_bar.addWidget(self.prod_rm_btn)
         prod_lower_bar.addStretch()
 
+        self.prod_dynamic_area = QVBoxLayout()
+        self.prod_widgets: List[MoleculeDrawOrType] = []
+        self.prod_max_len = 0
+
         prod_layout = QVBoxLayout()
-        prod_layout.addWidget(MoleculeDrawOrType(Config.ade_prod_mols, 0, 'prod'))
+        # prod_layout.addWidget(MoleculeDrawOrType(Config.ade_prod_mols, 0, 'prod'))
+        prod_layout.addLayout(self.prod_dynamic_area)
         prod_layout.addLayout(prod_lower_bar)
         prod_layout.addStretch()
         prod_input.setLayout(prod_layout)
@@ -67,8 +75,13 @@ class MoleculeSelectTab(QWidget):
         large_layout.addWidget(prod_input)
         self.setLayout(large_layout)
 
+        # initialize one reactant and one product
+        self.add_reactant_field()
+        self.add_product_field()
+
     @pyqtSlot()
     def add_reactant_field(self):
+        # TODO check if race condition happens when buttons are pressed quickly?
         Config.ade_rct_mols.append(AdeGuiMolecule(''))
         rct_widget = MoleculeDrawOrType(Config.ade_rct_mols, self.rct_max_len, 'rct')
         self.rct_widgets.append(rct_widget)
@@ -77,7 +90,7 @@ class MoleculeSelectTab(QWidget):
 
     @pyqtSlot()
     def remove_reactant_field(self):
-        if self.rct_max_len != 0:
+        if self.rct_max_len > 1:
             Config.ade_rct_mols.pop()
             widget_to_remove = self.rct_widgets.pop()
             self.rct_dynamic_area.removeWidget(widget_to_remove)
@@ -86,7 +99,20 @@ class MoleculeSelectTab(QWidget):
 
     @pyqtSlot()
     def add_product_field(self):
-        pass
+        Config.ade_prod_mols.append(AdeGuiMolecule(''))
+        prod_widget = MoleculeDrawOrType(Config.ade_prod_mols, self.prod_max_len, 'prod')
+        self.prod_widgets.append(prod_widget)
+        self.prod_dynamic_area.addWidget(prod_widget)
+        self.prod_max_len += 1
+
+    @pyqtSlot()
+    def remove_product_field(self):
+        if self.prod_max_len > 1:
+            Config.ade_prod_mols.pop()
+            widget_to_remove = self.prod_widgets.pop()
+            self.prod_dynamic_area.removeWidget(widget_to_remove)
+            widget_to_remove.deleteLater()
+            self.prod_max_len -= 1
 
 
 class MoleculeDrawOrType(QFrame):
