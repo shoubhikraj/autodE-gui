@@ -1,6 +1,5 @@
 # Contains the config class which is instantiated once at the beginning
 # of the program
-import platform, subprocess
 from typing import List, Union
 import tempfile, pathlib, atexit, shutil
 import errno

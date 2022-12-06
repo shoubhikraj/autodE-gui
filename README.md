@@ -7,7 +7,8 @@ At the moment, it is in development and bugs/hangups are expected.
 
 ### How to install:
 
-The code is written to be usable on all platforms. It has been tested on MacOS 12.6, Linux Ubuntu 22.0.4, and Windows 10.
+The code is written to be usable on all platforms (i.e. platform-agnostic). It has been tested on MacOS 12.6, and Windows 10.
+Linux Ubuntu 22.0.4 is also used for testing, but infrequently.
 
 The autodE GUI will work with Python >3.7, and needs the following packages:
 
@@ -39,9 +40,13 @@ and once done, press the "Generate" button, which will write a script file for a
 on a local system or submit to a cluster. In future, a feature to run autodE from the GUI will be implemented.
 
 ### Known issues
-The molecule editor executable (default Avogadro) must be closed before the GUI interface will be responsive. This is
+1. The molecule editor executable (default Avogadro) must be closed before the GUI interface will be responsive. This is
 because it waits for Avogadro to finish editing the file, and prevents multiple instances of Avogadro attempting to edit
 the same file.
+2. When using two Avogadro windows side-by-side (i.e. editing two molecules at once), if you wish to copy the molecule
+from one window to other, use Select All (Ctrl+A) and then copy. If you do not use Select All, not all atoms may be
+copied over, and the order of atoms may not be the same. **The order of atoms is crucial in most autodE uses, and wrong
+order *will* cause errors**.
 
 ### Development
 autodE GUI is currently in development. Any feedback and advice is greatly appreciated.
