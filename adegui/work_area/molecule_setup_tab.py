@@ -25,16 +25,20 @@ class MoleculeSelectTab(QWidget):
         # setup grid
         large_layout = QHBoxLayout()  # reactant on left, product on right
 
+
         # SMILES input or draw reactants
         rct_input = QGroupBox("Reactant(s)")
         rct_add_btn = QPushButton("+ Add reactant")
+        rct_rm_btn = QPushButton("- Remove reactant")
         rct_add_btn.clicked.connect(self.add_reactant_field)
+        rct_rm_btn.clicked.connect(self.remove_reactant_field)
         rct_lower_bar = QHBoxLayout()
         rct_lower_bar.addWidget(rct_add_btn)
+        rct_lower_bar.addWidget(rct_rm_btn)
         rct_lower_bar.addStretch()
 
         self.rct_dynamic_area = QVBoxLayout()
-        self.rct_widgets = []  # holds references to widgets
+        self.rct_widgets: List[QWidget] = []  # holds references to widgets
         self.rct_max_len = 0
 
         rct_layout = QVBoxLayout()
@@ -43,6 +47,7 @@ class MoleculeSelectTab(QWidget):
         rct_layout.addStretch()  # to prevent unnecessary whitespace between widgets
         # two reactants right now can add more later
         rct_input.setLayout(rct_layout)
+
 
         # SMILES input or draw products
         prod_input = QGroupBox("Product(s)")
@@ -69,6 +74,15 @@ class MoleculeSelectTab(QWidget):
         self.rct_widgets.append(rct_widget)
         self.rct_dynamic_area.addWidget(rct_widget)
         self.rct_max_len += 1
+
+    @pyqtSlot()
+    def remove_reactant_field(self):
+        if self.rct_max_len != 0:
+            Config.ade_rct_mols.pop()
+            widget_to_remove = self.rct_widgets.pop()
+            self.rct_dynamic_area.removeWidget(widget_to_remove)
+            widget_to_remove.deleteLater()
+            self.rct_max_len -= 1
 
     @pyqtSlot()
     def add_product_field(self):
