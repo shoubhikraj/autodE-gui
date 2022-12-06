@@ -81,7 +81,6 @@ class MoleculeSelectTab(QWidget):
 
     @pyqtSlot()
     def add_reactant_field(self):
-        # TODO check if race condition happens when buttons are pressed quickly?
         Config.ade_rct_mols.append(AdeGuiMolecule(''))
         rct_widget = MoleculeDrawOrType(Config.ade_rct_mols, self.rct_max_len, 'rct')
         self.rct_widgets.append(rct_widget)
